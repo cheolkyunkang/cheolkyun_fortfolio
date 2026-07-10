@@ -1,0 +1,40 @@
+name: Update stock prices
+
+on:
+  schedule:
+    # 매 20분마다 실행 (UTC 기준). 한국/미국 장중 포함 넓게 커버.
+    - cron: "*/20 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  update-prices:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch latest prices
+        run: python scripts/fetch_prices.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "portfolio-bot"
+          git config user.email "actions@users.noreply.github.com"
+          if ! git diff --quiet -- data/prices.json; then
+            git add data/prices.json
+            git commit -m "chore: update prices $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            git push
+          else
+            echo "No price changes."
+          fi

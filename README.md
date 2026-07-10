@@ -1,0 +1,30 @@
+# 철구리 투자 포트폴리오 대시보드
+
+한국/미국 종목을 함께 관리하는 개인 투자 포트폴리오 대시보드입니다. GitHub Pages로 배포되어 어디서든 접속할 수 있고, 시세는 GitHub Actions가 자동으로 갱신합니다.
+
+## 구성
+
+- `index.html` — 대시보드 본체 (viewer 기본 공개 + admin 비밀번호 로그인, 국내/미국 지수 패널, AI 스피어, 종목별 수익률/손익/평가금액/환차손익, 배당 현황·뉴스, 종목 추가·수정 폼)
+- `data/positions.json` — 보유 종목 원장 (종목명, 티커, 수량, 장부가, 매입금액, 매입평균환율, 배당 내역). 대시보드의 입력 폼으로 수정하면 이 파일이 자동으로 갱신됩니다.
+- `data/prices.json` — 최신 시세/환율/지수. `scripts/fetch_prices.py`가 자동으로 채웁니다.
+- `data/news.json` — 종목 관련 뉴스·배당 소식. `scripts/fetch_news.py`가 자동으로 채웁니다.
+- `scripts/fetch_prices.py` — Yahoo Finance(1차) / Stooq(2차)에서 시세와 코스피·코스닥·나스닥·S&P500 지수를, Yahoo 또는 open.er-api.com에서 원/달러 환율을 가져오는 스크립트
+- `scripts/fetch_news.py` — Google 뉴스 RSS에서 종목별 뉴스와 배당 관련 뉴스를 가져오는 스크립트
+- `.github/workflows/update-prices.yml` — 20분마다 시세를 갱신하는 워크플로우
+- `.github/workflows/update-news.yml` — 1시간마다 뉴스를 갱신하는 워크플로우
+
+## 접근 방식 (viewer 기본 공개 / admin 로그인)
+
+- 누구든 대시보드에 접속하면 **비밀번호 없이 바로 viewer 모드**로 보입니다. 메뉴·항목 구성은 admin과 동일하지만 금액 숫자가 모두 `***`로 마스킹되고, 수익률/배당수익률/배분 비중 같은 비율 정보만 실수치로 보이며 편집 기능은 숨겨집니다. 이 링크는 그대로 다른 사람과 공유해도 금액이 노출되지 않습니다.
+- 우측 상단 **🔑 Admin 로그인** 버튼에 admin 비밀번호를 입력하면 모든 금액과 편집 기능(설정, 종목 추가/수정, 배당 추가)이 열립니다. **🔒 Admin 로그아웃** 버튼으로 언제든 다시 viewer 모드로 돌아갈 수 있습니다.
+- admin 로그인 상태는 브라우저(localStorage)에만 저장되며, 로그아웃하거나 다른 브라우저/기기에서 접속하면 다시 viewer 모드부터 시작합니다.
+
+## 종목 추가/수정
+
+1. 대시보드 우측 상단 **⚙️ 설정**에서 GitHub Personal Access Token(이 저장소의 Contents 읽기/쓰기 권한만 있는 fine-grained 토큰 권장)을 입력합니다. 토큰은 브라우저(localStorage)에만 저장되고 이 저장소 코드에는 포함되지 않습니다.
+2. **+ 종목 추가** 또는 각 종목의 **수정** 버튼으로 폼을 열고 저장하면 `data/positions.json`이 GitHub Contents API를 통해 즉시 커밋됩니다.
+3. 다음 시세 갱신 주기(최대 20분)에 맞춰 대시보드가 최신 시세로 계산됩니다.
+
+## 시세/환율 데이터 소스가 실패할 경우
+
+`.github/workflows/update-prices.yml`을 Actions 탭에서 수동 실행(`Run workflow`)해 로그를 확인하세요. Yahoo Finance가 일시적으로 막히면 Stooq로 자동 폴백합니다.

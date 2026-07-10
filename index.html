@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>철구리 투자 포트폴리오</title>
+<style>
+  .viz-root {
+    --surface-1:      #fcfcfb;
+    --page:           #f9f9f7;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --grid:           #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border:         rgba(11,11,11,0.10);
+    --series-1: #2a78d6; /* blue */
+    --series-2: #1baf7a; /* aqua */
+    --series-3: #eda100; /* yellow */
+    --series-4: #4a3aa7; /* violet */
+    --series-5: #e34948; /* red */
+    --series-6: #e87ba4; /* magenta */
+    --series-7: #eb6834; /* orange */
+    --series-8: #008300; /* green */
+    --good:     #0ca30c;
+    --good-text:#006300;
+    --critical: #d03b3b;
+    --warning:  #fab219;
+  }
+  @media (prefers-color-scheme: dark) {
+    .viz-root {
+      --surface-1:      #1a1a19;
+      --page:           #0d0d0d;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #898781;
+      --grid:           #2c2c2a;
+      --baseline:       #383835;
+      --border:         rgba(255,255,255,0.10);
+      --series-1: #3987e5;
+      --series-2: #199e70;
+      --series-3: #c98500;
+      --series-4: #9085e9;
+      --series-5: #e66767;
+      --series-6: #d55181;
+      --series-7: #d95926;
+      --series-8: #008300;
+      --good:     #0ca30c;
+      --good-text:#0ca30c;
+      --critical: #d03b3b;
+      --warning:  #fab219;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--page);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 24px 16px 80px; }
+  a { color: var(--series-1); }
+  b, strong { font-weight: 700; }
+
+  /* ---------- Admin 로그인 ---------- */
+  #lockScreen .box {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 16px; padding: 32px; width: 320px; text-align: center;
+  }
+  #lockScreen h2 { margin: 0 0 4px; font-size: 18px; font-weight: 700; }
+  #lockScreen p { color: var(--text-secondary); font-size: 13px; margin: 0 0 16px; }
+  #lockScreen input {
+    width: 100%; padding: 10px 12px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--page); color: var(--text-primary);
+    font-size: 14px; margin-bottom: 10px;
+  }
+  #lockScreen button {
+    width: 100%; padding: 10px 12px; border-radius: 8px; border: none;
+    background: var(--series-1); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer;
+  }
+  #lockError { color: var(--critical); font-size: 12px; height: 16px; margin-bottom: 4px; }
+
+  /* ---------- 헤더 ---------- */
+  header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+  header h1 { font-size: 20px; font-weight: 700; margin: 0; }
+  header .meta { font-size: 12px; color: var(--text-muted); }
+  .roleTag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 100px; margin-left: 8px; vertical-align: middle; }
+  .roleTag.admin { background: color-mix(in srgb, var(--good) 18%, transparent); color: var(--good-text); }
+  .roleTag.viewer { background: color-mix(in srgb, var(--series-3) 22%, transparent); color: var(--series-3); }
+  .aiBadge {
+    display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700;
+    padding: 2px 8px; border-radius: 100px; margin-left: 6px; vertical-align: middle;
+    background: color-mix(in srgb, var(--series-1) 16%, transparent); color: var(--series-1);
+    cursor: default;
+  }
+  .headerActions { display: flex; gap: 8px; align-items: center; }
+  .iconBtn {
+    border: 1px solid var(--border); background: var(--surface-1); color: var(--text-primary);
+    border-radius: 8px; padding: 7px 12px; font-size: 13px; cursor: pointer; font-weight: 600;
+  }
+  .iconBtn.primary { background: var(--series-1); border-color: var(--series-1); color: #fff; font-weight: 700; }
+
+  /* ---------- 상단 3분할: 국내지수 / AI / 미국지수 ---------- */
+  .topGrid { display: grid; grid-template-columns: 300px 1fr 300px; gap: 14px; margin-bottom: 24px; align-items: stretch; }
+  @media (max-width: 940px) { .topGrid { grid-template-columns: 1fr; } }
+  .topCol { display: flex; flex-direction: column; gap: 13px; }
+  .topCol.center { align-items: center; justify-content: center; }
+  .panelCard { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+  .panelCard h2 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-secondary); margin: 0 0 10px; display: flex; align-items: center; gap: 6px; }
+  .flagIcon { font-size: 22px; line-height: 1; }
+  .panelCard.fill { display: flex; flex-direction: column; height: 100%; }
+  .panelCard.fill .idxRows { flex: 1; display: flex; flex-direction: column; justify-content: space-around; }
+  .idxRow { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--grid); }
+  .idxRow:last-child { border-bottom: none; }
+  .idxName { font-size: 16px; font-weight: 700; width: 68px; flex: none; white-space: nowrap; }
+  .idxSpark { flex: 1; height: 31px; min-width: 0; }
+  .idxVals { text-align: right; flex: none; min-width: 96px; }
+  .idxPrice { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .idxChange { font-size: 13px; font-variant-numeric: tabular-nums; }
+  .fxValue { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .fxMeta { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  /* AI 스피어 애니메이션 (캔버스 파티클 구) */
+  .aiOrbWrap {
+    position: relative; width: 220px; height: 220px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .aiOrbWrap::before {
+    content: ""; position: absolute; inset: -20px; border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--series-1) 35%, transparent) 0%, transparent 70%);
+    filter: blur(6px);
+    animation: glowPulse 2.4s ease-in-out infinite;
+  }
+  #aiSphere { position: relative; width: 220px; height: 220px; }
+  .aiLabel { margin-top: 8px; font-size: 12px; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+  .blinkDot { width: 7px; height: 7px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 60%, transparent); animation: blink 1.6s ease-in-out infinite; }
+  @keyframes glowPulse { 0%, 100% { opacity: 0.55; transform: scale(0.96); } 50% { opacity: 0.9; transform: scale(1.04); } }
+  @keyframes blink { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent); } 50% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--good) 0%, transparent); } }
+  @media (prefers-reduced-motion: reduce) {
+    .aiOrbWrap::before, .blinkDot { animation: none; }
+  }
+
+  /* ---------- 통계 타일 ---------- */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .tile {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
+  }
+  .tile .label { font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px; }
+  .tile .value { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .tile .sub { font-size: 12px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .good { color: var(--good-text); }
+  .bad { color: var(--critical); }
+
+  section { margin-bottom: 28px; }
+  section > h2 { font-size: 15px; font-weight: 700; margin: 0 0 12px; color: var(--text-primary); }
+
+  /* ---------- 배분 차트 ---------- */
+  .allocRow { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: stretch; }
+  @media (max-width: 700px) { .allocRow { grid-template-columns: 1fr; } }
+  .allocLeft {
+    display: flex; gap: 32px; align-items: center; flex-wrap: wrap;
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px; padding: 22px 26px;
+  }
+  .legend { display: flex; flex-direction: column; gap: 12px; font-size: 15px; flex: 1; min-width: 200px; }
+  .legend .item { display: flex; align-items: center; gap: 10px; }
+  .legend .swatch { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+  .legend .pct { color: var(--text-muted); font-variant-numeric: tabular-nums; margin-left: auto; padding-left: 12px; font-weight: 700; }
+  .allocAmountBox {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px;
+    padding: 22px 26px; display: flex; flex-direction: column; justify-content: center;
+  }
+  .allocAmountBox .row { display: flex; justify-content: space-between; align-items: baseline; padding: 9px 0; }
+  .allocAmountBox .row .k { font-size: 14px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
+  .allocAmountBox .row .v { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .allocAmountBox .row.main .v { font-size: 30px; }
+  .allocAmountBox .row.main .k { font-size: 15px; }
+  .allocAmountBox hr { border: none; border-top: 1px solid var(--grid); margin: 8px 0; }
+  @media (max-width: 480px) {
+    .allocAmountBox .row { flex-direction: column; align-items: flex-start; gap: 3px; }
+    .allocAmountBox .row.main .v { font-size: 26px; }
+  }
+
+  /* ---------- 테이블 ---------- */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  th, td { padding: 10px 12px; text-align: right; border-bottom: 1px solid var(--grid); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; white-space: normal; }
+  th { color: var(--text-muted); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.02em; background: var(--page); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: color-mix(in srgb, var(--series-1) 6%, transparent); }
+  .rowBtn { border: 1px solid var(--border); background: transparent; color: var(--text-secondary); border-radius: 6px; padding: 3px 8px; font-size: 11px; cursor: pointer; }
+  .tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 100px; border: 1px solid var(--border); color: var(--text-muted); }
+  .flag { color: var(--warning); font-size: 11px; }
+  .tableScroll { overflow-x: auto; }
+  .lockedCell { color: var(--text-muted); }
+
+  /* ---------- 배당 ---------- */
+  .divGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .divCard { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+  .divCard .head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .divCard .name { font-weight: 700; font-size: 13px; }
+  .divCard .total { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .divBars { display: flex; align-items: flex-end; gap: 3px; height: 40px; margin: 8px 0; }
+  .divBars .bar { flex: 1; background: var(--series-2); border-radius: 2px 2px 0 0; min-height: 2px; }
+  .divCard .yield { font-size: 12px; color: var(--text-secondary); }
+  .divCard .next { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+  .divCard .addBtn { font-size: 11px; margin-top: 8px; }
+
+  /* ---------- 뉴스 ---------- */
+  .newsGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; }
+  .newsCard { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+  .newsCard a { color: var(--text-primary); text-decoration: none; font-size: 13px; font-weight: 600; line-height: 1.4; }
+  .newsCard a:hover { color: var(--series-1); }
+  .newsCard .src { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+  .newsEmpty { font-size: 12px; color: var(--text-muted); }
+  .divNewsTag { display: inline-block; font-size: 10px; font-weight: 700; color: var(--series-3); border: 1px solid var(--series-3); border-radius: 100px; padding: 1px 7px; margin-bottom: 6px; }
+
+  /* ---------- 폼 (모달) ---------- */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: none; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
+  .overlay.open { display: flex; }
+  .modal { background: var(--surface-1); border-radius: 14px; padding: 22px; width: 380px; max-width: 100%; max-height: 90vh; overflow-y: auto; }
+  .modal h3 { margin: 0 0 14px; font-size: 15px; font-weight: 700; }
+  .field { margin-bottom: 12px; }
+  .field label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
+  .field input, .field select {
+    width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--page); color: var(--text-primary); font-size: 13px;
+  }
+  .field .hint { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+  .modalActions { display: flex; gap: 8px; margin-top: 18px; }
+  .modalActions button { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--page); color: var(--text-primary); font-size: 13px; cursor: pointer; font-weight: 600; }
+  .modalActions button.primary { background: var(--series-1); border-color: var(--series-1); color: #fff; font-weight: 700; }
+  .modalActions button.danger { background: var(--critical); border-color: var(--critical); color: #fff; }
+  #formStatus { font-size: 12px; margin-top: 10px; min-height: 16px; }
+
+  footer { color: var(--text-muted); font-size: 11px; text-align: center; margin-top: 40px; line-height: 1.7; }
+
+  /* ---------- 모바일 대응 ---------- */
+  .scrollHint { display: none; font-size: 11px; color: var(--text-muted); margin: 0 0 6px; }
+  @media (max-width: 600px) {
+    .wrap { padding: 16px 12px 60px; }
+    header h1 { font-size: 17px; }
+    header { gap: 8px; }
+    .headerActions { width: 100%; }
+    .headerActions .iconBtn { flex: 1; text-align: center; }
+    .aiOrbWrap, #aiSphere { width: 170px; height: 170px; }
+    .panelCard { padding: 13px 14px; }
+    .panelCard h2 { font-size: 12px; }
+    .flagIcon { font-size: 18px; }
+    .idxName { font-size: 13px; width: 54px; }
+    .idxPrice { font-size: 13px; }
+    .idxChange { font-size: 11px; }
+    .fxValue { font-size: 21px; }
+    .allocLeft { padding: 16px; gap: 16px; }
+    .legend { font-size: 13px; }
+    table { font-size: 12px; }
+    th, td { padding: 8px 9px; }
+    .scrollHint { display: block; }
+  }
+</style>
+</head>
+<body class="viz-root">
+
+<div class="overlay" id="lockScreen">
+  <div class="box">
+    <h2>🔑 Admin 로그인</h2>
+    <p>관리자 비밀번호를 입력하면 전체 금액과 편집 기능이 열립니다</p>
+    <div id="lockError"></div>
+    <input id="pwInput" type="password" placeholder="관리자 비밀번호" autocomplete="current-password" />
+    <button id="pwSubmit">로그인</button>
+    <button id="pwCancel" style="background:transparent;color:var(--text-secondary);border:1px solid var(--border);margin-top:8px;">취소</button>
+  </div>
+</div>
+
+<div class="wrap" id="app">
+  <header>
+    <div>
+      <h1>💼 철구리 투자 포트폴리오<span class="roleTag" id="roleTag"></span><span class="aiBadge" title="Claude(Anthropic)가 이 대시보드를 만들었어요">🤖 Built with Claude</span></h1>
+      <div class="meta" id="lastUpdated">불러오는 중…</div>
+    </div>
+    <div class="headerActions">
+      <button class="iconBtn" id="adminLoginBtn">🔑 Admin 로그인</button>
+      <button class="iconBtn" id="lockBtn" style="display:none;">🔒 Admin 로그아웃</button>
+      <button class="iconBtn" id="settingsBtn">⚙️ 설정</button>
+      <button class="iconBtn primary" id="addBtn">+ 종목 추가</button>
+    </div>
+  </header>
+
+  <section class="topGrid">
+    <div class="topCol">
+      <div class="panelCard">
+        <h2><span class="flagIcon">🇰🇷</span> 국내 증시</h2>
+        <div class="idxRow" id="idxKOSPI"><span class="idxName">코스피</span><svg class="idxSpark"></svg><span class="idxVals">-</span></div>
+        <div class="idxRow" id="idxKOSDAQ"><span class="idxName">코스닥</span><svg class="idxSpark"></svg><span class="idxVals">-</span></div>
+      </div>
+      <div class="panelCard">
+        <h2>💱 원/달러 환율</h2>
+        <div class="fxValue" id="fxValue">-</div>
+        <div class="fxMeta" id="fxMeta">-</div>
+      </div>
+    </div>
+
+    <div class="topCol center">
+      <div class="aiOrbWrap">
+        <canvas id="aiSphere" width="440" height="440"></canvas>
+      </div>
+      <div class="aiLabel"><span class="blinkDot"></span>실시간 분석 중</div>
+    </div>
+
+    <div class="topCol">
+      <div class="panelCard fill">
+        <h2><span class="flagIcon">🇺🇸</span> 미국 증시</h2>
+        <div class="idxRows">
+          <div class="idxRow" id="idxNASDAQ"><span class="idxName">나스닥</span><svg class="idxSpark"></svg><span class="idxVals">-</span></div>
+          <div class="idxRow" id="idxSP500"><span class="idxName">S&P500</span><svg class="idxSpark"></svg><span class="idxVals">-</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>📊 자산 배분</h2>
+    <div class="allocRow">
+      <div class="allocLeft">
+        <svg id="donut" width="190" height="190" viewBox="0 0 190 190"></svg>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="allocAmountBox" id="allocAmountBox"></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>📋 보유 종목</h2>
+    <div class="scrollHint">← 좌우로 스크롤하면 전체 항목을 볼 수 있어요 →</div>
+    <div class="tableScroll">
+      <table>
+        <thead id="holdingsHead"></thead>
+        <tbody id="holdingsBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>💰 배당 현황</h2>
+    <div class="divGrid" id="dividendGrid"></div>
+  </section>
+
+  <section>
+    <h2>📰 관련 뉴스 &amp; 배당 소식</h2>
+    <div style="margin-bottom:6px; font-size:12px; font-weight:700; color:var(--text-secondary);">종목 뉴스</div>
+    <div class="newsGrid" id="newsGrid"></div>
+    <div style="margin:16px 0 6px; font-size:12px; font-weight:700; color:var(--text-secondary);">배당 관련 소식</div>
+    <div class="newsGrid" id="dividendNewsGrid"></div>
+  </section>
+
+  <footer>
+    시세: Yahoo Finance / Stooq 기반, 약 20분 주기 자동 갱신 · 환율: Yahoo / open.er-api.com · 뉴스: Google 뉴스, 약 1시간 주기 자동 갱신<br />
+    투자 판단의 참고용이며 실제 매매 시세와 차이가 있을 수 있습니다.
+  </footer>
+</div>
+
+<!-- 종목 추가/수정 모달 -->
+<div class="overlay" id="formOverlay">
+  <div class="modal">
+    <h3 id="formTitle">종목 추가</h3>
+    <input type="hidden" id="f_id" />
+    <div class="field">
+      <label>투자종목명</label>
+      <input id="f_name" placeholder="예: SCHD" />
+    </div>
+    <div class="field">
+      <label>티커(시세 조회용)</label>
+      <input id="f_ticker" placeholder="한국: 종목코드.KS · 미국: 티커 그대로" />
+    </div>
+    <div class="field">
+      <label>시장</label>
+      <select id="f_market">
+        <option value="KR">한국</option>
+        <option value="US">미국</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>매입수량</label>
+      <input id="f_qty" type="number" step="any" />
+    </div>
+    <div class="field">
+      <label>장부가 (평균 매입단가, 종목 통화 기준)</label>
+      <input id="f_book" type="number" step="any" />
+    </div>
+    <div class="field">
+      <label>매입금액 (총 매입원가, 종목 통화 기준)</label>
+      <input id="f_amount" type="number" step="any" />
+    </div>
+    <div class="field" id="f_fxWrap">
+      <label>매입평균환율 (미국 종목만, 원/달러)</label>
+      <input id="f_fx" type="number" step="any" placeholder="예: 1380" />
+    </div>
+    <div class="field">
+      <label><input type="checkbox" id="f_isDiv" style="width:auto; margin-right:6px;" />배당 종목</label>
+    </div>
+    <div id="formStatus"></div>
+    <div class="modalActions">
+      <button id="deleteBtn" class="danger" style="display:none;">삭제</button>
+      <button id="cancelBtn">취소</button>
+      <button id="saveBtn" class="primary">저장 (GitHub에 반영)</button>
+    </div>
+  </div>
+</div>
+
+<!-- 설정 모달 -->
+<div class="overlay" id="settingsOverlay">
+  <div class="modal">
+    <h3>설정</h3>
+    <div class="field">
+      <label>GitHub Personal Access Token</label>
+      <input id="s_token" type="password" placeholder="ghp_..." />
+      <div class="hint">이 저장소(data/positions.json)에 대한 Contents 쓰기 권한만 있는 fine-grained 토큰을 권장합니다. 이 브라우저에만 저장되며 외부로 전송되지 않습니다.</div>
+    </div>
+    <div class="modalActions">
+      <button id="s_clear">토큰 삭제</button>
+      <button id="s_save" class="primary">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 배당 추가 모달 -->
+<div class="overlay" id="divOverlay">
+  <div class="modal">
+    <h3>배당 내역 추가</h3>
+    <input type="hidden" id="d_id" />
+    <div class="field">
+      <label>지급일</label>
+      <input id="d_date" type="date" />
+    </div>
+    <div class="field">
+      <label>배당금액 (종목 통화 기준)</label>
+      <input id="d_amount" type="number" step="any" />
+    </div>
+    <div id="divStatus" style="font-size:12px; min-height:16px;"></div>
+    <div class="modalActions">
+      <button id="d_cancel">취소</button>
+      <button id="d_save" class="primary">저장</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const OWNER = "cheolkyunkang";
+  const REPO = "cheolkyun_fortfolio";
+  const PW_HASH_ADMIN = "9f3f972cebc816d900d67a22a985f8d0a1f56efc51df4c3139d7efac23de0e94";
+  const SERIES = ["#2a78d6", "#1baf7a", "#eda100", "#4a3aa7", "#e34948", "#e87ba4", "#eb6834", "#008300"];
+
+  let positionsData = null;   // 원본 JSON (updatedAt, positions[])
+  let pricesData = null;
+  let newsData = null;
+  let role = "viewer";        // 'admin' | 'viewer' — 기본은 viewer, Admin 비밀번호 입력 시에만 admin
+
+  // ---------------- 유틸 ----------------
+  function fmt(n, opts) {
+    if (n === null || n === undefined || isNaN(n)) return "-";
+    return new Intl.NumberFormat("ko-KR", opts || { maximumFractionDigits: 0 }).format(n);
+  }
+  function krw(n) { return "₩" + fmt(n, { maximumFractionDigits: 0 }); }
+  function usd(n) { return "$" + fmt(n, { maximumFractionDigits: 2, minimumFractionDigits: 2 }); }
+  function pct(n) { return (n >= 0 ? "+" : "") + fmt(n, { maximumFractionDigits: 2, minimumFractionDigits: 2 }) + "%"; }
+  // 뷰어 모드에서는 금액만 ***로 마스킹하고(메뉴/항목은 그대로 노출), 비율은 그대로 보여준다.
+  function mKrw(n) { return isAdmin() ? krw(n) : "***"; }
+  function mUsd(n) { return isAdmin() ? usd(n) : "***"; }
+  function mNum(n, opts) { return isAdmin() ? fmt(n, opts) : "***"; }
+  async function sha256Hex(str) {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+  }
+  function b64EncodeUnicode(str) {
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (m, p1) => String.fromCharCode("0x" + p1)));
+  }
+  function isAdmin() { return role === "admin"; }
+
+  // ---------------- Admin 로그인 ----------------
+  // 별도 로그인 없이 뷰어(금액 마스킹)로 바로 보이고, Admin 비밀번호를 입력해야 전체 금액/편집 기능이 열린다.
+  async function tryUnlock() {
+    const val = document.getElementById("pwInput").value;
+    const h = await sha256Hex(val);
+    if (h !== PW_HASH_ADMIN) {
+      document.getElementById("lockError").textContent = "비밀번호가 올바르지 않습니다.";
+      return;
+    }
+    role = "admin";
+    localStorage.setItem("pf_role", "admin");
+    document.getElementById("lockScreen").classList.remove("open");
+    document.getElementById("pwInput").value = "";
+    document.getElementById("lockError").textContent = "";
+    render();
+  }
+  document.getElementById("pwSubmit").addEventListener("click", tryUnlock);
+  document.getElementById("pwInput").addEventListener("keydown", (e) => { if (e.key === "Enter") tryUnlock(); });
+  document.getElementById("adminLoginBtn").addEventListener("click", () => {
+    document.getElementById("lockError").textContent = "";
+    document.getElementById("lockScreen").classList.add("open");
+  });
+  document.getElementById("pwCancel").addEventListener("click", () => {
+    document.getElementById("lockScreen").classList.remove("open");
+  });
+  document.getElementById("lockBtn").addEventListener("click", () => {
+    role = "viewer";
+    localStorage.removeItem("pf_role");
+    render();
+  });
+
+
+  // ---------------- 데이터 로드 ----------------
+  async function loadData() {
+    const t = Date.now();
+    const [posRes, priceRes, newsRes] = await Promise.all([
+      fetch(`./data/positions.json?t=${t}`),
+      fetch(`./data/prices.json?t=${t}`),
+      fetch(`./data/news.json?t=${t}`).catch(() => null),
+    ]);
+    positionsData = await posRes.json();
+    pricesData = await priceRes.json();
+    newsData = newsRes && newsRes.ok ? await newsRes.json() : { generalNews: [], dividendNews: [] };
+  }
+
+  // ---------------- 계산 ----------------
+  function computeMetrics(p) {
+    const priceInfo = (pricesData && pricesData.prices && pricesData.prices[p.ticker]) || {};
+    const curPrice = priceInfo.price;
+    const fxRate = (pricesData && pricesData.fxRate) || null;
+    const hasPrice = curPrice !== null && curPrice !== undefined;
+
+    let marketValueNative = hasPrice ? curPrice * p.quantity : null;
+    let marketValueKRW, costKRW, pnlKRW, returnPct, fxEffectKRW, priceEffectKRW;
+
+    if (p.currency === "KRW") {
+      marketValueKRW = marketValueNative;
+      costKRW = p.purchaseAmount;
+      pnlKRW = hasPrice ? marketValueKRW - costKRW : null;
+      returnPct = hasPrice ? (pnlKRW / costKRW) * 100 : null;
+      fxEffectKRW = null;
+      priceEffectKRW = pnlKRW;
+    } else {
+      const avgFx = p.avgFxRate;
+      if (hasPrice && fxRate && avgFx) {
+        marketValueKRW = marketValueNative * fxRate;
+        costKRW = p.purchaseAmount * avgFx;
+        pnlKRW = p.quantity * (curPrice * fxRate - p.bookValue * avgFx);
+        priceEffectKRW = p.quantity * fxRate * (curPrice - p.bookValue);
+        fxEffectKRW = p.quantity * p.bookValue * (fxRate - avgFx);
+        returnPct = (pnlKRW / costKRW) * 100;
+      } else {
+        marketValueKRW = null; costKRW = p.purchaseAmount * (avgFx || 0) || null;
+        pnlKRW = null; returnPct = null; fxEffectKRW = null; priceEffectKRW = null;
+      }
+    }
+
+    const divTotal = (p.dividends || []).reduce((s, d) => s + d.amount, 0);
+    const divTotalKRW = p.currency === "KRW" ? divTotal : (fxRate ? divTotal * fxRate : null);
+    const divYield = p.purchaseAmount ? (divTotal / p.purchaseAmount) * 100 : null;
+
+    return { curPrice, hasPrice, marketValueNative, marketValueKRW, costKRW, pnlKRW, returnPct, fxEffectKRW, priceEffectKRW, divTotal, divTotalKRW, divYield };
+  }
+
+  function estimateNextDividend(dividends) {
+    if (!dividends || dividends.length < 2) return null;
+    const dates = dividends.map((d) => new Date(d.date + "T00:00:00")).sort((a, b) => a - b);
+    let totalGap = 0;
+    for (let i = 1; i < dates.length; i++) totalGap += (dates[i] - dates[i - 1]);
+    const avgGapMs = totalGap / (dates.length - 1);
+    const last = dates[dates.length - 1];
+    const next = new Date(last.getTime() + avgGapMs);
+    return next;
+  }
+
+  // ---------------- 상단 지수 패널 ----------------
+  function sparklinePath(history, w, h) {
+    if (!history || history.length < 2) return "";
+    const min = Math.min(...history), max = Math.max(...history);
+    const range = max - min || 1;
+    const step = w / (history.length - 1);
+    return history.map((v, i) => {
+      const x = i * step;
+      const y = h - ((v - min) / range) * h;
+      return `${i === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
+    }).join(" ");
+  }
+
+  function renderIndexRow(elId, label, info) {
+    const el = document.getElementById(elId);
+    if (!info || info.price == null) {
+      el.querySelector(".idxVals").textContent = "-";
+      return;
+    }
+    const up = (info.changePct || 0) >= 0;
+    const color = up ? "var(--good)" : "var(--critical)";
+    const svg = el.querySelector(".idxSpark");
+    const w = 90, h = 28;
+    svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+    const path = sparklinePath(info.history, w, h);
+    svg.innerHTML = path ? `<path d="${path}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>` : "";
+    el.querySelector(".idxVals").innerHTML = `
+      <div class="idxPrice">${fmt(info.price, { maximumFractionDigits: 2 })}</div>
+      <div class="idxChange" style="color:${color}">${up ? "▲" : "▼"} ${pct(info.changePct)}</div>
+    `;
+  }
+
+  function renderTopPanels() {
+    const idx = (pricesData && pricesData.indices) || {};
+    renderIndexRow("idxKOSPI", "코스피", idx.KOSPI);
+    renderIndexRow("idxKOSDAQ", "코스닥", idx.KOSDAQ);
+    renderIndexRow("idxNASDAQ", "나스닥", idx.NASDAQ);
+    renderIndexRow("idxSP500", "S&P500", idx.SP500);
+
+    const fx = pricesData && pricesData.fxRate;
+    document.getElementById("fxValue").textContent = fx ? `₩${fmt(fx, { maximumFractionDigits: 2 })}` : "-";
+    const fxTime = pricesData && pricesData.updatedAt ? new Date(pricesData.updatedAt).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }) : "-";
+    document.getElementById("fxMeta").textContent = `업데이트(KST): ${fxTime}`;
+  }
+
+  // ---------------- 렌더 ----------------
+  function render() {
+    const positions = positionsData.positions;
+    const metrics = positions.map(computeMetrics);
+
+    // 역할 표시
+    const roleTag = document.getElementById("roleTag");
+    roleTag.textContent = isAdmin() ? "ADMIN" : "VIEWER";
+    roleTag.className = "roleTag " + (isAdmin() ? "admin" : "viewer");
+    document.getElementById("settingsBtn").style.display = isAdmin() ? "inline-block" : "none";
+    document.getElementById("addBtn").style.display = isAdmin() ? "inline-block" : "none";
+    document.getElementById("adminLoginBtn").style.display = isAdmin() ? "none" : "inline-block";
+    document.getElementById("lockBtn").style.display = isAdmin() ? "inline-block" : "none";
+
+    renderTopPanels();
+
+    // 업데이트 시각
+    const priceTime = pricesData.updatedAt ? new Date(pricesData.updatedAt).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }) : "아직 갱신 전";
+    document.getElementById("lastUpdated").textContent =
+      `시세 갱신(KST): ${priceTime}` + (pricesData.fxRate ? ` · 환율 1USD = ₩${fmt(pricesData.fxRate, { maximumFractionDigits: 2 })}` : "");
+
+    // ---- 통계 타일 ----
+    let totalValue = 0, totalCost = 0, totalPnl = 0, totalDiv = 0, missing = false;
+    metrics.forEach((m) => {
+      if (m.marketValueKRW == null || m.costKRW == null) { missing = true; return; }
+      totalValue += m.marketValueKRW;
+      totalCost += m.costKRW;
+      totalPnl += m.pnlKRW;
+      if (m.divTotalKRW) totalDiv += m.divTotalKRW;
+    });
+    const totalReturnPct = totalCost ? (totalPnl / totalCost) * 100 : null;
+
+    // ---- 배분 차트 + 금액 박스 ----
+    renderDonut(positions, metrics, totalValue);
+    renderAllocAmountBox(totalValue, totalCost, totalPnl, totalReturnPct, totalDiv, missing);
+
+    // ---- 테이블 (메뉴/컬럼은 역할과 무관하게 항상 동일, 금액만 마스킹) ----
+    const head = document.getElementById("holdingsHead");
+    const cols = ["종목", "시장", "수량", "현재가", "장부가", "평가금액", "매입금액", "손익", "수익률", "환차손익", ""];
+    head.innerHTML = "<tr>" + cols.map((c) => `<th>${c}</th>`).join("") + "</tr>";
+
+    const tbody = document.getElementById("holdingsBody");
+    tbody.innerHTML = positions.map((p, i) => {
+      const m = metrics[i];
+      const priceStr = !m.hasPrice ? "-" : (p.currency === "KRW" ? krw(m.curPrice) : usd(m.curPrice));
+      const retStr = m.returnPct != null ? pct(m.returnPct) : "-";
+      const pnlCls = m.pnlKRW == null ? "" : (m.pnlKRW >= 0 ? "good" : "bad");
+      const flag = p.needsFxReview ? '<div class="flag">⚠ 매입평균환율 확인 필요</div>' : "";
+
+      const bookStr = p.bookValue == null ? "-" : (p.currency === "KRW" ? mKrw(p.bookValue) : mUsd(p.bookValue));
+      const mvStr = m.marketValueKRW != null ? mKrw(m.marketValueKRW) : "-";
+      const costStr = m.costKRW != null ? mKrw(m.costKRW) : "-";
+      const pnlStr = m.pnlKRW != null ? mKrw(m.pnlKRW) : "-";
+      const fxStr = p.currency === "KRW" ? '<span class="tag">해당없음</span>' : (m.fxEffectKRW != null ? mKrw(m.fxEffectKRW) : "-");
+      const fxCls = (p.currency !== "KRW" && m.fxEffectKRW != null) ? (m.fxEffectKRW >= 0 ? "good" : "bad") : "";
+      return `
+        <tr>
+          <td>${p.name}${flag}</td>
+          <td><span class="tag">${p.market === "KR" ? "국내" : "미국"}</span></td>
+          <td>${fmt(p.quantity, { maximumFractionDigits: 4 })}</td>
+          <td>${priceStr}</td>
+          <td>${bookStr}</td>
+          <td>${mvStr}</td>
+          <td>${costStr}</td>
+          <td class="${pnlCls}">${pnlStr}</td>
+          <td class="${pnlCls}">${retStr}</td>
+          <td class="${fxCls}">${fxStr}</td>
+          <td>${isAdmin() ? `<button class="rowBtn" data-edit="${p.id}">수정</button>` : ""}</td>
+        </tr>
+      `;
+    }).join("");
+    tbody.querySelectorAll("[data-edit]").forEach((btn) => btn.addEventListener("click", () => openForm(btn.dataset.edit)));
+
+    // ---- 배당 카드 ----
+    const divGrid = document.getElementById("dividendGrid");
+    divGrid.innerHTML = positions.filter((p) => p.isDividendStock).map((p, idx) => {
+      const m = computeMetrics(p);
+      const divs = (p.dividends || []).slice(-12);
+      const max = Math.max(1, ...divs.map((d) => d.amount));
+      const bars = divs.map((d) => `<div class="bar" title="${isAdmin() ? d.date + ': ' + fmt(d.amount, {maximumFractionDigits:2}) : d.date}" style="height:${Math.max(6, (d.amount / max) * 40)}px; background:${SERIES[idx % SERIES.length]}"></div>`).join("");
+      const totalStr = p.currency === "KRW" ? mKrw(m.divTotal) : mUsd(m.divTotal);
+      const nextDate = estimateNextDividend(p.dividends);
+      const nextStr = nextDate ? `예상 다음 배당(추정): ${nextDate.toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" })}` : "예상 다음 배당: 데이터 부족";
+      return `
+        <div class="divCard">
+          <div class="head">
+            <div class="name">${p.name}</div>
+            <div class="total">${totalStr}</div>
+          </div>
+          <div class="divBars">${bars || '<span style="font-size:11px;color:var(--text-muted)">배당 내역 없음</span>'}</div>
+          <div class="yield">누적 배당수익률(원가 대비): ${m.divYield != null ? pct(m.divYield) : "-"}</div>
+          <div class="next">📅 ${nextStr}</div>
+          ${isAdmin() ? `<button class="rowBtn addBtn" data-adddiv="${p.id}">+ 배당 내역 추가</button>` : ""}
+        </div>
+      `;
+    }).join("");
+    divGrid.querySelectorAll("[data-adddiv]").forEach((btn) => btn.addEventListener("click", () => openDivForm(btn.dataset.adddiv)));
+
+    // ---- 뉴스 ----
+    renderNews();
+  }
+
+  function renderNews() {
+    const newsGrid = document.getElementById("newsGrid");
+    const divNewsGrid = document.getElementById("dividendNewsGrid");
+    const general = (newsData && newsData.generalNews) || [];
+    const dividend = (newsData && newsData.dividendNews) || [];
+
+    newsGrid.innerHTML = general.length
+      ? general.map((n) => `
+          <div class="newsCard">
+            <a href="${n.link}" target="_blank" rel="noopener noreferrer">${n.title}</a>
+            <div class="src">${n.source || ""}</div>
+          </div>
+        `).join("")
+      : `<div class="newsEmpty">아직 뉴스가 없어요. 첫 배포 후 1시간 이내에 자동으로 채워집니다.</div>`;
+
+    divNewsGrid.innerHTML = dividend.length
+      ? dividend.map((n) => `
+          <div class="newsCard">
+            <div class="divNewsTag">배당</div><br/>
+            <a href="${n.link}" target="_blank" rel="noopener noreferrer">${n.title}</a>
+            <div class="src">${n.source || ""}</div>
+          </div>
+        `).join("")
+      : `<div class="newsEmpty">아직 배당 관련 뉴스가 없어요.</div>`;
+  }
+
+  function renderDonut(positions, metrics, total) {
+    const svg = document.getElementById("donut");
+    const legend = document.getElementById("legend");
+    const cx = 95, cy = 95, r = 74, stroke = 28;
+    let angle = -90;
+    const parts = [];
+    positions.forEach((p, i) => {
+      const val = metrics[i].marketValueKRW || 0;
+      const frac = total > 0 ? val / total : 0;
+      const sweep = frac * 360;
+      parts.push({ p, frac, color: SERIES[i % SERIES.length], start: angle, end: angle + sweep });
+      angle += sweep;
+    });
+    function arcPath(start, end) {
+      const s = polar(start), e = polar(end);
+      const large = end - start > 180 ? 1 : 0;
+      return `M ${s.x} ${s.y} A ${r} ${r} 0 ${large} 1 ${e.x} ${e.y}`;
+    }
+    function polar(deg) {
+      const rad = (deg * Math.PI) / 180;
+      return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+    }
+    svg.innerHTML = parts.map((s) =>
+      s.frac > 0 ? `<path d="${arcPath(s.start, s.end)}" stroke="${s.color}" stroke-width="${stroke}" fill="none" stroke-linecap="butt"/>` : ""
+    ).join("") + `<circle cx="${cx}" cy="${cy}" r="${r - stroke / 2 - 2}" fill="var(--surface-1)" />`;
+
+    legend.innerHTML = parts.map((s) => `
+      <div class="item">
+        <span class="swatch" style="background:${s.color}"></span>
+        <span>${s.p.name}</span>
+        <span class="pct">${fmt(s.frac * 100, { maximumFractionDigits: 1 })}%</span>
+      </div>
+    `).join("");
+  }
+
+  function renderAllocAmountBox(totalValue, totalCost, totalPnl, totalReturnPct, totalDiv, missing) {
+    const box = document.getElementById("allocAmountBox");
+    const pnlCls = totalPnl >= 0 ? "good" : "bad";
+    box.innerHTML = `
+      <div class="row main"><span class="k">총 평가금액</span><span class="v">${mKrw(totalValue)}</span></div>
+      <hr />
+      <div class="row"><span class="k">총 매입원가</span><span class="v">${mKrw(totalCost)}</span></div>
+      <div class="row"><span class="k">총 손익</span><span class="v ${pnlCls}">${mKrw(totalPnl)}</span></div>
+      <div class="row"><span class="k">총 수익률</span><span class="v ${pnlCls}">${pct(totalReturnPct)}</span></div>
+      <div class="row"><span class="k">누적 배당(원화환산)</span><span class="v">${mKrw(totalDiv)}</span></div>
+      ${missing ? `<div class="row"><span class="k" style="color:var(--warning)">⚠️ 안내</span><span class="v" style="font-size:11px; font-weight:500; color:var(--text-muted);">일부 종목 시세 없음</span></div>` : ""}
+    `;
+  }
+
+  // ---------------- AI 파티클 스피어 ----------------
+  function initAISphere() {
+    const canvas = document.getElementById("aiSphere");
+    if (!canvas || canvas.__inited) return;
+    canvas.__inited = true;
+    const ctx = canvas.getContext("2d");
+    const size = canvas.width;
+    const center = size / 2;
+    const radius = size * 0.36;
+    const numPoints = 340;
+    const points = [];
+    const golden = Math.PI * (3 - Math.sqrt(5));
+    for (let i = 0; i < numPoints; i++) {
+      const y = 1 - (i / (numPoints - 1)) * 2;
+      const r = Math.sqrt(Math.max(0, 1 - y * y));
+      const theta = golden * i;
+      points.push({ x: Math.cos(theta) * r, y, z: Math.sin(theta) * r });
+    }
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let angle = 0;
+    const tilt = 0.45;
+    const cosT = Math.cos(tilt), sinT = Math.sin(tilt);
+
+    function frame() {
+      ctx.clearRect(0, 0, size, size);
+      if (!reduceMotion) angle += 0.0045;
+      const cosA = Math.cos(angle), sinA = Math.sin(angle);
+      const projected = points.map((p) => {
+        const x = p.x * cosA - p.z * sinA;
+        const z = p.x * sinA + p.z * cosA;
+        const y2 = p.y * cosT - z * sinT;
+        const z2 = p.y * sinT + z * cosT;
+        return { x, y: y2, z: z2 };
+      });
+      projected.sort((a, b) => a.z - b.z);
+      projected.forEach((p) => {
+        const depth = (p.z + 1.3) / 2.3;
+        const px = center + p.x * radius;
+        const py = center + p.y * radius;
+        const dotR = size * 0.004 + depth * size * 0.011;
+        const hue = 218 - p.x * 40;
+        const light = 46 + depth * 26;
+        const alpha = 0.25 + depth * 0.7;
+        ctx.beginPath();
+        ctx.fillStyle = `hsla(${hue}, 78%, ${light}%, ${alpha})`;
+        ctx.arc(px, py, dotR, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      requestAnimationFrame(frame);
+    }
+    frame();
+  }
+
+  // ---------------- 종목 추가/수정 폼 ----------------
+  function openForm(id) {
+    if (!isAdmin()) return;
+    const overlay = document.getElementById("formOverlay");
+    const isNew = !id;
+    document.getElementById("formTitle").textContent = isNew ? "종목 추가" : "종목 수정";
+    document.getElementById("deleteBtn").style.display = isNew ? "none" : "block";
+    const p = isNew ? {} : positionsData.positions.find((x) => x.id === id);
+    document.getElementById("f_id").value = id || "";
+    document.getElementById("f_name").value = p.name || "";
+    document.getElementById("f_ticker").value = p.ticker || "";
+    document.getElementById("f_market").value = p.market || "KR";
+    document.getElementById("f_qty").value = p.quantity ?? "";
+    document.getElementById("f_book").value = p.bookValue ?? "";
+    document.getElementById("f_amount").value = p.purchaseAmount ?? "";
+    document.getElementById("f_fx").value = p.avgFxRate ?? "";
+    document.getElementById("f_isDiv").checked = !!p.isDividendStock;
+    document.getElementById("formStatus").textContent = "";
+    toggleFxField();
+    overlay.classList.add("open");
+  }
+  function toggleFxField() {
+    document.getElementById("f_fxWrap").style.display = document.getElementById("f_market").value === "US" ? "block" : "none";
+  }
+  document.getElementById("f_market").addEventListener("change", toggleFxField);
+  document.getElementById("addBtn").addEventListener("click", () => openForm(null));
+  document.getElementById("cancelBtn").addEventListener("click", () => document.getElementById("formOverlay").classList.remove("open"));
+
+  document.getElementById("saveBtn").addEventListener("click", async () => {
+    const token = localStorage.getItem("gh_pat");
+    if (!token) { setFormStatus("설정에서 GitHub 토큰을 먼저 입력해주세요.", true); return; }
+
+    const id = document.getElementById("f_id").value || slugify(document.getElementById("f_name").value);
+    const market = document.getElementById("f_market").value;
+    const newPos = {
+      id,
+      name: document.getElementById("f_name").value.trim(),
+      ticker: document.getElementById("f_ticker").value.trim(),
+      market,
+      currency: market === "KR" ? "KRW" : "USD",
+      quantity: parseFloat(document.getElementById("f_qty").value),
+      bookValue: parseFloat(document.getElementById("f_book").value),
+      purchaseAmount: parseFloat(document.getElementById("f_amount").value),
+      avgFxRate: market === "US" ? parseFloat(document.getElementById("f_fx").value) || null : null,
+      isDividendStock: document.getElementById("f_isDiv").checked,
+    };
+    if (!newPos.name || !newPos.ticker || isNaN(newPos.quantity) || isNaN(newPos.bookValue) || isNaN(newPos.purchaseAmount)) {
+      setFormStatus("필수 값을 모두 입력해주세요.", true); return;
+    }
+
+    const existingIdx = positionsData.positions.findIndex((x) => x.id === id);
+    if (existingIdx >= 0) {
+      newPos.dividends = positionsData.positions[existingIdx].dividends || [];
+      positionsData.positions[existingIdx] = newPos;
+    } else {
+      newPos.dividends = [];
+      positionsData.positions.push(newPos);
+    }
+    positionsData.updatedAt = new Date().toISOString();
+    await commitPositions(token, "종목 정보 업데이트: " + newPos.name);
+  });
+
+  document.getElementById("deleteBtn").addEventListener("click", async () => {
+    const token = localStorage.getItem("gh_pat");
+    if (!token) { setFormStatus("설정에서 GitHub 토큰을 먼저 입력해주세요.", true); return; }
+    const id = document.getElementById("f_id").value;
+    if (!confirm("정말 이 종목을 삭제할까요?")) return;
+    positionsData.positions = positionsData.positions.filter((x) => x.id !== id);
+    positionsData.updatedAt = new Date().toISOString();
+    await commitPositions(token, "종목 삭제: " + id);
+  });
+
+  function slugify(s) {
+    return (s || "item").toLowerCase().trim().replace(/[^a-z0-9가-힣]+/g, "-").replace(/(^-|-$)/g, "") || ("item-" + Date.now());
+  }
+  function setFormStatus(msg, isError) {
+    const el = document.getElementById("formStatus");
+    el.textContent = msg;
+    el.style.color = isError ? "var(--critical)" : "var(--good-text)";
+  }
+
+  // ---------------- 배당 추가 폼 ----------------
+  function openDivForm(id) {
+    if (!isAdmin()) return;
+    document.getElementById("d_id").value = id;
+    document.getElementById("d_date").value = new Date().toISOString().slice(0, 10);
+    document.getElementById("d_amount").value = "";
+    document.getElementById("divStatus").textContent = "";
+    document.getElementById("divOverlay").classList.add("open");
+  }
+  document.getElementById("d_cancel").addEventListener("click", () => document.getElementById("divOverlay").classList.remove("open"));
+  document.getElementById("d_save").addEventListener("click", async () => {
+    const token = localStorage.getItem("gh_pat");
+    if (!token) { document.getElementById("divStatus").textContent = "설정에서 GitHub 토큰을 먼저 입력해주세요."; return; }
+    const id = document.getElementById("d_id").value;
+    const date = document.getElementById("d_date").value;
+    const amount = parseFloat(document.getElementById("d_amount").value);
+    if (!date || isNaN(amount)) { document.getElementById("divStatus").textContent = "날짜와 금액을 입력해주세요."; return; }
+    const pos = positionsData.positions.find((x) => x.id === id);
+    pos.dividends = pos.dividends || [];
+    pos.dividends.push({ date, amount });
+    pos.dividends.sort((a, b) => a.date.localeCompare(b.date));
+    positionsData.updatedAt = new Date().toISOString();
+    await commitPositions(token, "배당 내역 추가: " + pos.name + " " + date, "divOverlay", "divStatus");
+  });
+
+  // ---------------- GitHub 커밋 ----------------
+  async function commitPositions(token, message, overlayId, statusId) {
+    overlayId = overlayId || "formOverlay";
+    statusId = statusId || "formStatus";
+    const statusEl = document.getElementById(statusId);
+    statusEl.style.color = "var(--text-secondary)";
+    statusEl.textContent = "GitHub에 저장 중…";
+    try {
+      const path = "data/positions.json";
+      const getResp = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`, {
+        headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json" },
+      });
+      if (!getResp.ok) throw new Error("현재 파일 조회 실패 (" + getResp.status + ")");
+      const getJson = await getResp.json();
+      const content = b64EncodeUnicode(JSON.stringify(positionsData, null, 2));
+      const putResp = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json" },
+        body: JSON.stringify({ message, content, sha: getJson.sha }),
+      });
+      if (!putResp.ok) {
+        const errJson = await putResp.json().catch(() => ({}));
+        throw new Error(errJson.message || ("저장 실패 (" + putResp.status + ")"));
+      }
+      statusEl.style.color = "var(--good-text)";
+      statusEl.textContent = "저장 완료! 잠시 후 대시보드가 갱신됩니다.";
+      setTimeout(() => {
+        document.getElementById(overlayId).classList.remove("open");
+        render();
+      }, 700);
+    } catch (e) {
+      statusEl.style.color = "var(--critical)";
+      statusEl.textContent = "오류: " + e.message;
+    }
+  }
+
+  // ---------------- 설정 ----------------
+  document.getElementById("settingsBtn").addEventListener("click", () => {
+    if (!isAdmin()) return;
+    document.getElementById("s_token").value = localStorage.getItem("gh_pat") || "";
+    document.getElementById("settingsOverlay").classList.add("open");
+  });
+  document.getElementById("s_save").addEventListener("click", () => {
+    const v = document.getElementById("s_token").value.trim();
+    if (v) localStorage.setItem("gh_pat", v);
+    document.getElementById("settingsOverlay").classList.remove("open");
+  });
+  document.getElementById("s_clear").addEventListener("click", () => {
+    localStorage.removeItem("gh_pat");
+    document.getElementById("s_token").value = "";
+  });
+
+  // 오버레이 바깥 클릭 시 닫기
+  document.querySelectorAll(".overlay").forEach((ov) => {
+    ov.addEventListener("click", (e) => { if (e.target === ov) ov.classList.remove("open"); });
+  });
+
+  // ---------------- 부트 ----------------
+  async function boot() {
+    await loadData();
+    render();
+    initAISphere();
+    // 5분마다 시세/뉴스 자동 새로고침 (positions는 그대로)
+    setInterval(async () => {
+      const t = Date.now();
+      const [r1, r2] = await Promise.all([
+        fetch(`./data/prices.json?t=${t}`),
+        fetch(`./data/news.json?t=${t}`).catch(() => null),
+      ]);
+      pricesData = await r1.json();
+      if (r2 && r2.ok) newsData = await r2.json();
+      render();
+    }, 5 * 60 * 1000);
+  }
+
+  window.__boot = boot;
+
+  // 별도 로그인 없이 뷰어(금액 마스킹)로 바로 시작하고, Admin 비밀번호를 입력해야 전체 금액/편집 기능이 열린다.
+  role = localStorage.getItem("pf_role") === "admin" ? "admin" : "viewer";
+  boot();
+})();
+</script>
+</body>
+</html>

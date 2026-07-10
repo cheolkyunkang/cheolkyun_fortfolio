@@ -1,0 +1,40 @@
+name: Update portfolio news
+
+on:
+  schedule:
+    # 1시간마다 실행 (뉴스는 시세만큼 자주 바뀔 필요가 없음)
+    - cron: "15 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  update-news:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch latest news
+        run: python scripts/fetch_news.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "portfolio-bot"
+          git config user.email "actions@users.noreply.github.com"
+          if ! git diff --quiet -- data/news.json; then
+            git add data/news.json
+            git commit -m "chore: update news $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            git push
+          else
+            echo "No news changes."
+          fi
