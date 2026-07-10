@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-10T00:00:00+09:00",
+  "updatedAt": "2026-07-10T06:10:48.147Z",
   "positions": [
     {
       "id": "tiger-sp500",
@@ -8,18 +8,39 @@
       "market": "KR",
       "currency": "KRW",
       "quantity": 1741,
-      "bookValue": 23702.66,
-      "purchaseAmount": 41266325,
+      "bookValue": 23704,
+      "purchaseAmount": 41268049,
       "avgFxRate": null,
       "isDividendStock": true,
       "dividends": [
-        { "date": "2024-11-04", "amount": 6825 },
-        { "date": "2025-02-04", "amount": 17955 },
-        { "date": "2025-05-07", "amount": 35840 },
-        { "date": "2025-08-04", "amount": 30392 },
-        { "date": "2025-11-04", "amount": 35520 },
-        { "date": "2026-02-03", "amount": 97825 },
-        { "date": "2026-05-06", "amount": 101060 }
+        {
+          "date": "2024-11-04",
+          "amount": 6825
+        },
+        {
+          "date": "2025-02-04",
+          "amount": 17955
+        },
+        {
+          "date": "2025-05-07",
+          "amount": 35840
+        },
+        {
+          "date": "2025-08-04",
+          "amount": 30392
+        },
+        {
+          "date": "2025-11-04",
+          "amount": 35520
+        },
+        {
+          "date": "2026-02-03",
+          "amount": 97825
+        },
+        {
+          "date": "2026-05-06",
+          "amount": 101060
+        }
       ]
     },
     {
@@ -34,11 +55,26 @@
       "avgFxRate": 1452.1673,
       "isDividendStock": true,
       "dividends": [
-        { "date": "2025-07-01", "amount": 58.17 },
-        { "date": "2025-09-30", "amount": 61.31 },
-        { "date": "2025-12-16", "amount": 65.98 },
-        { "date": "2026-03-31", "amount": 319.69 },
-        { "date": "2026-06-30", "amount": 333.10 }
+        {
+          "date": "2025-07-01",
+          "amount": 58.17
+        },
+        {
+          "date": "2025-09-30",
+          "amount": 61.31
+        },
+        {
+          "date": "2025-12-16",
+          "amount": 65.98
+        },
+        {
+          "date": "2026-03-31",
+          "amount": 319.69
+        },
+        {
+          "date": "2026-06-30",
+          "amount": 333.1
+        }
       ]
     },
     {
@@ -49,19 +85,46 @@
       "currency": "USD",
       "quantity": 300,
       "bookValue": 57.62,
-      "purchaseAmount": 17284.70,
+      "purchaseAmount": 17284.7,
       "avgFxRate": 1437.2219,
       "isDividendStock": true,
       "dividends": [
-        { "date": "2025-11-05", "amount": 35.92 },
-        { "date": "2025-12-03", "amount": 38.43 },
-        { "date": "2026-01-05", "amount": 44.28 },
-        { "date": "2026-02-04", "amount": 71.14 },
-        { "date": "2026-03-04", "amount": 89.59 },
-        { "date": "2026-04-06", "amount": 107.23 },
-        { "date": "2026-05-06", "amount": 114.14 },
-        { "date": "2026-06-04", "amount": 99.25 },
-        { "date": "2026-07-06", "amount": 98.73 }
+        {
+          "date": "2025-11-05",
+          "amount": 35.92
+        },
+        {
+          "date": "2025-12-03",
+          "amount": 38.43
+        },
+        {
+          "date": "2026-01-05",
+          "amount": 44.28
+        },
+        {
+          "date": "2026-02-04",
+          "amount": 71.14
+        },
+        {
+          "date": "2026-03-04",
+          "amount": 89.59
+        },
+        {
+          "date": "2026-04-06",
+          "amount": 107.23
+        },
+        {
+          "date": "2026-05-06",
+          "amount": 114.14
+        },
+        {
+          "date": "2026-06-04",
+          "amount": 99.25
+        },
+        {
+          "date": "2026-07-06",
+          "amount": 98.73
+        }
       ]
     },
     {
@@ -76,15 +139,42 @@
       "avgFxRate": 1439.5154,
       "isDividendStock": true,
       "dividends": [
-        { "date": "2025-11-05", "amount": 42.85 },
-        { "date": "2025-12-03", "amount": 55.96 },
-        { "date": "2026-01-05", "amount": 59.74 },
-        { "date": "2026-02-04", "amount": 95.40 },
-        { "date": "2026-03-04", "amount": 130.23 },
-        { "date": "2026-04-06", "amount": 142.92 },
-        { "date": "2026-05-06", "amount": 153.71 },
-        { "date": "2026-06-04", "amount": 146.81 },
-        { "date": "2026-07-06", "amount": 165.57 }
+        {
+          "date": "2025-11-05",
+          "amount": 42.85
+        },
+        {
+          "date": "2025-12-03",
+          "amount": 55.96
+        },
+        {
+          "date": "2026-01-05",
+          "amount": 59.74
+        },
+        {
+          "date": "2026-02-04",
+          "amount": 95.4
+        },
+        {
+          "date": "2026-03-04",
+          "amount": 130.23
+        },
+        {
+          "date": "2026-04-06",
+          "amount": 142.92
+        },
+        {
+          "date": "2026-05-06",
+          "amount": 153.71
+        },
+        {
+          "date": "2026-06-04",
+          "amount": 146.81
+        },
+        {
+          "date": "2026-07-06",
+          "amount": 165.57
+        }
       ]
     }
   ]
