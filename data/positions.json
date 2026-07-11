@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-11T02:11:19.306Z",
+  "updatedAt": "2026-07-11T02:12:26.772Z",
   "positions": [
     {
       "id": "tiger-sp500",
@@ -186,6 +186,19 @@
       "quantity": 3.992,
       "bookValue": 273.88,
       "purchaseAmount": 1258.75,
+      "avgFxRate": null,
+      "isDividendStock": false,
+      "dividends": []
+    },
+    {
+      "id": "코카콜라",
+      "name": "코카콜라",
+      "ticker": "KO",
+      "market": "US",
+      "currency": "USD",
+      "quantity": 13.93,
+      "bookValue": 75.59,
+      "purchaseAmount": 1163.01,
       "avgFxRate": null,
       "isDividendStock": false,
       "dividends": []
