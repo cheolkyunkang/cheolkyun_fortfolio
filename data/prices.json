@@ -1,12 +1,18 @@
 {
-  "updatedAt": "2026-07-11T07:42:06.477388+09:00",
-  "fxRate": 1498.87,
+  "updatedAt": "2026-07-11T12:41:12.397049+09:00",
+  "fxRate": 1498.7,
   "fxSource": "yahoo",
   "prices": {
     "360750.KS": {
       "price": 28085.0,
       "prevClose": 28605.0,
       "currency": "KRW",
+      "source": "yahoo"
+    },
+    "AAPL": {
+      "price": 315.32,
+      "prevClose": 308.63,
+      "currency": "USD",
       "source": "yahoo"
     },
     "JEPI": {
@@ -18,6 +24,12 @@
     "JEPQ": {
       "price": 60.51,
       "prevClose": 59.39,
+      "currency": "USD",
+      "source": "yahoo"
+    },
+    "KO": {
+      "price": 83.49,
+      "prevClose": 84.14,
       "currency": "USD",
       "source": "yahoo"
     },
@@ -79,8 +91,8 @@
     },
     "KOSDAQ": {
       "price": 837.43,
-      "prevClose": 785.0,
-      "changePct": 6.678980891719739,
+      "prevClose": 794.0,
+      "changePct": 5.4697732997481046,
       "history": [
         805.1699829101562,
         792.6699829101562,
