@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-11T02:12:26.772Z",
+  "updatedAt": "2026-07-11T03:48:01.103Z",
   "positions": [
     {
       "id": "tiger-sp500",
@@ -186,7 +186,7 @@
       "quantity": 3.992,
       "bookValue": 273.88,
       "purchaseAmount": 1258.75,
-      "avgFxRate": null,
+      "avgFxRate": 1450,
       "isDividendStock": false,
       "dividends": []
     },
