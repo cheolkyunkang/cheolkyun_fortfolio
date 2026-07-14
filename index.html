@@ -833,7 +833,7 @@
     svg.innerHTML = `
       <defs>
         ${gradDefs}
-        <filter id="donutShadow" x="-30%" y="-30%" width="160%" height="160%">
+        <filter id="donutShadow" filterUnits="userSpaceOnUse" x="-15" y="-15" width="220" height="220">
           <feDropShadow dx="0" dy="1.5" stdDeviation="2" flood-color="#000" flood-opacity="0.18" />
         </filter>
       </defs>
@@ -884,7 +884,7 @@
           <div class="name" title="${p.name}">${p.name}</div>
           <div class="priceRow">
             <span class="price">${priceStr}</span>
-            <span class="chg" style="color:${changePct != null ? color : "var(--text-muted)"}">${changePct != null ? (up ? "▲" : "▼") + " " + pct(Math.abs(changePct)) : "-"}</span>
+            <span class="chg" style="color:${changePct != null ? color : "var(--text-muted)"}">${changePct != null ? (up ? "▲" : "▼") + " " + pct(changePct) : "-"}</span>
           </div>
           <svg class="tickerSpark" viewBox="0 0 100 32" preserveAspectRatio="none">
             ${path ? `<path d="${path}" fill="none" stroke="${changePct != null ? color : "var(--text-muted)"}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>` : ""}
@@ -1012,7 +1012,7 @@
           <stop offset="0%" stop-color="color-mix(in srgb, ${lineColor} 28%, transparent)" />
           <stop offset="100%" stop-color="color-mix(in srgb, ${lineColor} 0%, transparent)" />
         </linearGradient>
-        <filter id="divLineShadow" x="-20%" y="-40%" width="140%" height="180%">
+        <filter id="divLineShadow" filterUnits="userSpaceOnUse" x="-20" y="-30" width="680" height="260">
           <feDropShadow dx="0" dy="1" stdDeviation="1.6" flood-color="${lineColor}" flood-opacity="0.35" />
         </filter>
       </defs>
