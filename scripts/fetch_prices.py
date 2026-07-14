@@ -33,8 +33,9 @@ INDEX_TICKERS = {
 
 
 def fetch_yahoo(ticker):
+    """개별 종목용: 현재가/전일종가/통화 + 스파크라인용 최근 종가 히스토리."""
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
-    r = requests.get(url, headers=HEADERS, timeout=TIMEOUT, params={"range": "5d", "interval": "1d"})
+    r = requests.get(url, headers=HEADERS, timeout=TIMEOUT, params={"range": "5d", "interval": "15m"})
     r.raise_for_status()
     data = r.json()
     result = data["chart"]["result"][0]
@@ -43,10 +44,18 @@ def fetch_yahoo(ticker):
     prev_close = meta.get("previousClose") or meta.get("chartPreviousClose")
     if price is None:
         raise ValueError("no regularMarketPrice")
+    closes = []
+    try:
+        closes = result["indicators"]["quote"][0]["close"] or []
+        closes = [c for c in closes if c is not None]
+        closes = closes[-40:]
+    except Exception:  # noqa: BLE001
+        closes = []
     return {
         "price": float(price),
         "prevClose": float(prev_close) if prev_close is not None else None,
         "currency": meta.get("currency"),
+        "history": closes,
         "source": "yahoo",
     }
 
@@ -110,6 +119,7 @@ def fetch_stooq(ticker):
         "price": float(close),
         "prevClose": None,
         "currency": None,
+        "history": [],
         "source": "stooq",
     }
 
@@ -155,7 +165,7 @@ def main():
         if result:
             prices[ticker] = result
         else:
-            prices[ticker] = {"price": None, "prevClose": None, "currency": None, "source": "error"}
+            prices[ticker] = {"price": None, "prevClose": None, "currency": None, "history": [], "source": "error"}
         time.sleep(0.5)
 
     fx_rate, fx_source = fetch_fx_rate()

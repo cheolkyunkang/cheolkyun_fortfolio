@@ -137,8 +137,10 @@
   .blinkDot { width: 7px; height: 7px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 60%, transparent); animation: blink 1.6s ease-in-out infinite; }
   @keyframes glowPulse { 0%, 100% { opacity: 0.55; transform: scale(0.96); } 50% { opacity: 0.9; transform: scale(1.04); } }
   @keyframes blink { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent); } 50% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--good) 0%, transparent); } }
+  .divLinePulse { animation: divDotPulse 2.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes divDotPulse { 0%, 100% { opacity: 0.55; transform: scale(0.85); } 50% { opacity: 0.05; transform: scale(1.8); } }
   @media (prefers-reduced-motion: reduce) {
-    .aiOrbWrap::before, .blinkDot { animation: none; }
+    .aiOrbWrap::before, .blinkDot, .divLinePulse { animation: none; }
   }
 
   /* ---------- 통계 타일 ---------- */
@@ -194,7 +196,27 @@
   .tableScroll { overflow-x: auto; }
   .lockedCell { color: var(--text-muted); }
 
+  /* ---------- 종목별 실시간 시세 ---------- */
+  .tickerGrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  @media (max-width: 940px) { .tickerGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 600px) { .tickerGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; } }
+  .tickerCard { background: var(--surface-1); border: 1px solid var(--border); border-radius: 9px; padding: 7px 9px; min-width: 0; }
+  .tickerCard .name { font-weight: 700; font-size: 10.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; color: var(--text-secondary); }
+  .tickerCard .priceRow { display: flex; align-items: baseline; justify-content: space-between; gap: 5px; }
+  .tickerCard .price { font-size: 12.5px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .tickerCard .chg { font-size: 9.5px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .tickerSpark { width: 100%; height: 18px; margin-top: 4px; display: block; }
+
   /* ---------- 배당 ---------- */
+  .divLineWrap { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  .divLineWrap .title { font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 10px; }
+  #divComboChart { width: 100%; height: 200px; display: block; }
+  .divLineAxis { display: flex; justify-content: space-between; margin-top: 6px; padding-left: 52px; padding-right: 52px; }
+  .divAxisCaption { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); padding: 0 52px; margin-top: 2px; }
+  .divLineAxis span { font-size: 10px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .divLineLegend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+  .divLineLegend .item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-secondary); }
+  .divLineLegend .swatch { width: 10px; height: 10px; border-radius: 3px; flex: none; }
   .divGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
   .divCard { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
   .divCard .head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
@@ -330,6 +352,11 @@
   </section>
 
   <section>
+    <h2>💹 종목별 실시간 시세</h2>
+    <div class="tickerGrid" id="tickerGrid"></div>
+  </section>
+
+  <section>
     <h2>📋 보유 종목</h2>
     <div class="scrollHint">← 좌우로 스크롤하면 전체 항목을 볼 수 있어요 →</div>
     <div class="tableScroll">
@@ -342,6 +369,13 @@
 
   <section>
     <h2>💰 배당 현황</h2>
+    <div class="divLineWrap">
+      <div class="title">월별 배당 수령액 (종목별) &amp; 누적 합계</div>
+      <svg id="divComboChart" viewBox="0 0 640 200" preserveAspectRatio="none"></svg>
+      <div class="divLineAxis" id="divComboAxis"></div>
+      <div class="divAxisCaption"><span>◀ 누적 합계(좌축)</span><span>월별 합계(우축) ▶</span></div>
+      <div class="divLineLegend" id="divComboLegend"></div>
+    </div>
     <div class="divGrid" id="dividendGrid"></div>
   </section>
 
@@ -657,13 +691,12 @@
 
     // ---- 테이블 (메뉴/컬럼은 역할과 무관하게 항상 동일, 금액만 마스킹) ----
     const head = document.getElementById("holdingsHead");
-    const cols = ["종목", "시장", "수량", "현재가", "장부가", "평가금액", "매입금액", "손익", "수익률", "환차손익", ""];
+    const cols = ["종목", "시장", "수량", "장부가", "평가금액", "매입금액", "손익", "수익률", "환차손익", ""];
     head.innerHTML = "<tr>" + cols.map((c) => `<th>${c}</th>`).join("") + "</tr>";
 
     const tbody = document.getElementById("holdingsBody");
     tbody.innerHTML = positions.map((p, i) => {
       const m = metrics[i];
-      const priceStr = !m.hasPrice ? "-" : (p.currency === "KRW" ? krw(m.curPrice) : usd(m.curPrice));
       const retStr = m.returnPct != null ? pct(m.returnPct) : "-";
       const pnlCls = m.pnlKRW == null ? "" : (m.pnlKRW >= 0 ? "good" : "bad");
       const flag = p.needsFxReview ? '<div class="flag">⚠ 매입평균환율 확인 필요</div>' : "";
@@ -679,7 +712,6 @@
           <td>${p.name}${flag}</td>
           <td><span class="tag">${p.market === "KR" ? "국내" : "미국"}</span></td>
           <td>${fmt(p.quantity, { maximumFractionDigits: 4 })}</td>
-          <td>${priceStr}</td>
           <td>${bookStr}</td>
           <td>${mvStr}</td>
           <td>${costStr}</td>
@@ -692,13 +724,27 @@
     }).join("");
     tbody.querySelectorAll("[data-edit]").forEach((btn) => btn.addEventListener("click", () => openForm(btn.dataset.edit)));
 
+    // ---- 종목별 실시간 시세 카드 ----
+    renderTickerGrid(positions, metrics);
+
+    // ---- 월별 배당 복합 차트 (종목별 막대 + 누적 꺾은선) ----
+    renderDividendCombo(positions);
+
     // ---- 배당 카드 ----
     const divGrid = document.getElementById("dividendGrid");
     divGrid.innerHTML = positions.filter((p) => p.isDividendStock).map((p, idx) => {
       const m = computeMetrics(p);
       const divs = (p.dividends || []).slice(-12);
       const max = Math.max(1, ...divs.map((d) => d.amount));
-      const bars = divs.map((d) => `<div class="bar" title="${isAdmin() ? d.date + ': ' + fmt(d.amount, {maximumFractionDigits:2}) : d.date}" style="height:${Math.max(6, (d.amount / max) * 40)}px; background:${SERIES[idx % SERIES.length]}"></div>`).join("");
+      const barColor = SERIES[idx % SERIES.length];
+      const bars = divs.map((d, di) => {
+        const isLast = di === divs.length - 1;
+        const bg = `linear-gradient(180deg, color-mix(in srgb, ${barColor} 55%, white) 0%, ${barColor} 100%)`;
+        const style = isLast
+          ? `height:${Math.max(6, (d.amount / max) * 40)}px; background:${bg}; box-shadow: 0 0 0 1.5px color-mix(in srgb, ${barColor} 70%, transparent), 0 2px 5px color-mix(in srgb, ${barColor} 45%, transparent);`
+          : `height:${Math.max(6, (d.amount / max) * 40)}px; background:${bg}; opacity:0.82;`;
+        return `<div class="bar" title="${isAdmin() ? d.date + ': ' + fmt(d.amount, {maximumFractionDigits:2}) : d.date}" style="${style}"></div>`;
+      }).join("");
       const totalStr = p.currency === "KRW" ? mKrw(m.divTotal) : mUsd(m.divTotal);
       const nextDate = estimateNextDividend(p.dividends);
       const nextStr = nextDate ? `예상 다음 배당(추정): ${nextDate.toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" })}` : "예상 다음 배당: 데이터 부족";
@@ -751,13 +797,14 @@
     const svg = document.getElementById("donut");
     const legend = document.getElementById("legend");
     const cx = 95, cy = 95, r = 74, stroke = 28;
+    const gapDeg = 2.2; // 세그먼트 사이 여백 (라운드 캡이 겹치지 않도록)
     let angle = -90;
     const parts = [];
     positions.forEach((p, i) => {
       const val = metrics[i].marketValueKRW || 0;
       const frac = total > 0 ? val / total : 0;
       const sweep = frac * 360;
-      parts.push({ p, frac, color: SERIES[i % SERIES.length], start: angle, end: angle + sweep });
+      parts.push({ p, frac, color: SERIES[i % SERIES.length], idx: i, start: angle, end: angle + sweep });
       angle += sweep;
     });
     function arcPath(start, end) {
@@ -769,13 +816,36 @@
       const rad = (deg * Math.PI) / 180;
       return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
     }
-    svg.innerHTML = parts.map((s) =>
-      s.frac > 0 ? `<path d="${arcPath(s.start, s.end)}" stroke="${s.color}" stroke-width="${stroke}" fill="none" stroke-linecap="butt"/>` : ""
-    ).join("") + `<circle cx="${cx}" cy="${cy}" r="${r - stroke / 2 - 2}" fill="var(--surface-1)" />`;
+    const gradDefs = parts.map((s) => `
+      <linearGradient id="donutGrad${s.idx}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="color-mix(in srgb, ${s.color} 55%, white)" />
+        <stop offset="100%" stop-color="${s.color}" />
+      </linearGradient>
+    `).join("");
+    const arcsSvg = parts.map((s) => {
+      if (s.frac <= 0) return "";
+      // 세그먼트가 매우 작으면 gap을 과하게 적용하지 않도록 보정
+      const sweepDeg = s.end - s.start;
+      const gap = Math.min(gapDeg, sweepDeg * 0.25);
+      return `<path d="${arcPath(s.start + gap / 2, s.end - gap / 2)}" stroke="url(#donutGrad${s.idx})" stroke-width="${stroke}" fill="none" stroke-linecap="round" filter="url(#donutShadow)"/>`;
+    }).join("");
+
+    svg.innerHTML = `
+      <defs>
+        ${gradDefs}
+        <filter id="donutShadow" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="0" dy="1.5" stdDeviation="2" flood-color="#000" flood-opacity="0.18" />
+        </filter>
+      </defs>
+      ${arcsSvg}
+      <circle cx="${cx}" cy="${cy}" r="${r - stroke / 2 - 2}" fill="var(--surface-1)" />
+      <text x="${cx}" y="${cy - 6}" text-anchor="middle" font-size="20" font-weight="700" fill="var(--text-primary)">${positions.length}</text>
+      <text x="${cx}" y="${cy + 13}" text-anchor="middle" font-size="10.5" fill="var(--text-muted)">보유 종목</text>
+    `;
 
     legend.innerHTML = parts.map((s) => `
       <div class="item">
-        <span class="swatch" style="background:${s.color}"></span>
+        <span class="swatch" style="background:linear-gradient(135deg, color-mix(in srgb, ${s.color} 55%, white), ${s.color})"></span>
         <span>${s.p.name}</span>
         <span class="pct">${fmt(s.frac * 100, { maximumFractionDigits: 1 })}%</span>
       </div>
@@ -793,6 +863,176 @@
       <div class="row"><span class="k">총 수익률</span><span class="v ${pnlCls}">${pct(totalReturnPct)}</span></div>
       <div class="row"><span class="k">누적 배당(원화환산)</span><span class="v">${mKrw(totalDiv)}</span></div>
       ${missing ? `<div class="row"><span class="k" style="color:var(--warning)">⚠️ 안내</span><span class="v" style="font-size:11px; font-weight:500; color:var(--text-muted);">일부 종목 시세 없음</span></div>` : ""}
+    `;
+  }
+
+  // ---------------- 종목별 실시간 시세 카드 ----------------
+  function renderTickerGrid(positions, metrics) {
+    const grid = document.getElementById("tickerGrid");
+    grid.innerHTML = positions.map((p, i) => {
+      const m = metrics[i];
+      const priceInfo = (pricesData && pricesData.prices && pricesData.prices[p.ticker]) || {};
+      const priceStr = !m.hasPrice ? "-" : (p.currency === "KRW" ? krw(m.curPrice) : usd(m.curPrice));
+      const prevClose = priceInfo.prevClose;
+      const changePct = (m.hasPrice && prevClose) ? ((m.curPrice - prevClose) / prevClose) * 100 : null;
+      const up = (changePct || 0) >= 0;
+      const color = up ? "var(--good)" : "var(--critical)";
+      const history = priceInfo.history || [];
+      const path = sparklinePath(history, 100, 32);
+      return `
+        <div class="tickerCard">
+          <div class="name" title="${p.name}">${p.name}</div>
+          <div class="priceRow">
+            <span class="price">${priceStr}</span>
+            <span class="chg" style="color:${changePct != null ? color : "var(--text-muted)"}">${changePct != null ? (up ? "▲" : "▼") + " " + pct(Math.abs(changePct)) : "-"}</span>
+          </div>
+          <svg class="tickerSpark" viewBox="0 0 100 32" preserveAspectRatio="none">
+            ${path ? `<path d="${path}" fill="none" stroke="${changePct != null ? color : "var(--text-muted)"}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>` : ""}
+          </svg>
+        </div>
+      `;
+    }).join("");
+  }
+
+  // ---------------- 월별 배당 데이터 공통 집계 ----------------
+  function krwCompact(v) {
+    return `₩${fmt(v / 1000, { maximumFractionDigits: 0 })}K`;
+  }
+
+  function buildMonthlyDividendData(positions) {
+    const fxRate = (pricesData && pricesData.fxRate) || null;
+    const divPositions = positions.filter((p) => p.isDividendStock && (p.dividends || []).length);
+    const perStockMonthly = divPositions.map((p) => {
+      const monthly = {};
+      (p.dividends || []).forEach((d) => {
+        const month = d.date.slice(0, 7);
+        const amtKrw = p.currency === "KRW" ? d.amount : (p.avgFxRate ? d.amount * p.avgFxRate : (fxRate ? d.amount * fxRate : null));
+        if (amtKrw == null) return;
+        monthly[month] = (monthly[month] || 0) + amtKrw;
+      });
+      return monthly;
+    });
+    const monthSet = new Set();
+    perStockMonthly.forEach((m) => Object.keys(m).forEach((k) => monthSet.add(k)));
+    const months = Array.from(monthSet).sort();
+    const series = divPositions.map((p, idx) => ({
+      name: p.name,
+      color: SERIES[idx % SERIES.length],
+      values: months.map((m) => perStockMonthly[idx][m] || 0),
+    }));
+    return { months, series };
+  }
+
+  function renderMonthAxis(elId, months) {
+    const axis = document.getElementById(elId);
+    if (!months.length) { axis.innerHTML = ""; return; }
+    const labelEvery = Math.max(1, Math.ceil(months.length / 7));
+    axis.innerHTML = months.map((m, i) => {
+      const show = i % labelEvery === 0 || i === months.length - 1;
+      return `<span>${show ? m.slice(2).replace("-", ".") : ""}</span>`;
+    }).join("");
+  }
+
+  // ---------------- 월별 배당 복합 차트 (종목별 막대 + 누적 꺾은선, 단일 Y축) ----------------
+  function renderDividendCombo(positions) {
+    const svg = document.getElementById("divComboChart");
+    const legendEl = document.getElementById("divComboLegend");
+    const { months, series } = buildMonthlyDividendData(positions);
+
+    if (!months.length) {
+      svg.innerHTML = "";
+      legendEl.innerHTML = `<span style="font-size:12px;color:var(--text-muted);">배당 내역이 없어요</span>`;
+      renderMonthAxis("divComboAxis", months);
+      return;
+    }
+
+    const monthTotals = months.map((_, i) => series.reduce((s, se) => s + se.values[i], 0));
+    let running = 0;
+    const cumulative = monthTotals.map((v) => (running += v));
+
+    // 좌축 = 누적 합계 스케일, 우축 = 월별 합계 스케일. 두 축 모두 같은 높이 범위(padT~baselineY)를 공유해서
+    // 막대가 좌측 꺾은선과 비슷한 정도로 차트를 꽉 채우도록 조정한다 (진짜 이중 Y축).
+    const w = 640, h = 200, padL = 52, padR = 52, padT = 26, padB = 8;
+    const maxLeft = Math.max(1, ...cumulative);
+    const maxRight = Math.max(1, ...monthTotals);
+    const yOfLeft = (v) => padT + (1 - v / maxLeft) * (h - padT - padB);
+    const yOfRight = (v) => padT + (1 - v / maxRight) * (h - padT - padB);
+    const baselineY = h - padB;
+    const groupW = (w - padL - padR) / months.length;
+    const barW = Math.min(26, groupW * 0.5);
+    const xOf = (i) => padL + groupW * (i + 0.5);
+
+    const gridN = 4;
+    let gridSvg = "", yLabelsSvg = "";
+    for (let i = 0; i <= gridN; i++) {
+      const y = padT + (1 - i / gridN) * (h - padT - padB);
+      const leftV = (maxLeft * i) / gridN;
+      const rightV = (maxRight * i) / gridN;
+      gridSvg += `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${w - padR}" y2="${y.toFixed(1)}" stroke="var(--grid)" stroke-width="1" />`;
+      yLabelsSvg += `<text x="${padL - 8}" y="${(y + 3).toFixed(1)}" text-anchor="end" font-size="10" fill="var(--text-muted)">${krwCompact(leftV)}</text>`;
+      yLabelsSvg += `<text x="${w - padR + 8}" y="${(y + 3).toFixed(1)}" text-anchor="start" font-size="10" fill="var(--text-muted)">${krwCompact(rightV)}</text>`;
+    }
+
+    // 종목별 그라디언트 정의 (막대용)
+    const barGradDefs = series.map((s, idx) => `
+      <linearGradient id="divBarGrad${idx}" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="color-mix(in srgb, ${s.color} 62%, white)" />
+        <stop offset="100%" stop-color="${s.color}" />
+      </linearGradient>
+    `).join("");
+
+    // 종목별 스택 막대 (월별 수령액, 우축 스케일)
+    let barsSvg = "";
+    months.forEach((m, i) => {
+      const cx = xOf(i);
+      let acc = 0;
+      series.forEach((s, sIdx) => {
+        const v = s.values[i];
+        if (v <= 0) return;
+        const y0 = yOfRight(acc);
+        const y1 = yOfRight(acc + v);
+        const segH = Math.max(0, y0 - y1 - (acc > 0 ? 2 : 0)); // 스택 세그먼트 사이 2px 간격
+        const rectY = y1 + (acc > 0 ? 2 : 0);
+        barsSvg += `<rect x="${(cx - barW / 2).toFixed(1)}" y="${rectY.toFixed(1)}" width="${barW.toFixed(1)}" height="${segH.toFixed(1)}" rx="2.5" fill="url(#divBarGrad${sIdx})" />`;
+        acc += v;
+      });
+    });
+
+    // 누적 합계 꺾은선 (좌축 스케일) - 브랜드 액센트 색 + 아래쪽 그라디언트 음영
+    const linePts = cumulative.map((v, i) => ({ x: xOf(i), y: yOfLeft(v) }));
+    const linePath = linePts.map((pt, i) => `${i === 0 ? "M" : "L"} ${pt.x.toFixed(1)} ${pt.y.toFixed(1)}`).join(" ");
+    const areaPath = `${linePath} L ${linePts[linePts.length - 1].x.toFixed(1)} ${baselineY} L ${linePts[0].x.toFixed(1)} ${baselineY} Z`;
+    const lastPt = linePts[linePts.length - 1];
+    const lineColor = "var(--series-1)";
+
+    svg.innerHTML = `
+      <defs>
+        ${barGradDefs}
+        <linearGradient id="divLineAreaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="color-mix(in srgb, ${lineColor} 28%, transparent)" />
+          <stop offset="100%" stop-color="color-mix(in srgb, ${lineColor} 0%, transparent)" />
+        </linearGradient>
+        <filter id="divLineShadow" x="-20%" y="-40%" width="140%" height="180%">
+          <feDropShadow dx="0" dy="1" stdDeviation="1.6" flood-color="${lineColor}" flood-opacity="0.35" />
+        </filter>
+      </defs>
+      ${gridSvg}
+      <line x1="${padL}" y1="${baselineY}" x2="${w - padR}" y2="${baselineY}" stroke="var(--baseline)" stroke-width="1" />
+      ${yLabelsSvg}
+      ${barsSvg}
+      <path d="${areaPath}" fill="url(#divLineAreaGrad)" stroke="none" />
+      <path d="${linePath}" fill="none" stroke="${lineColor}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#divLineShadow)" />
+      ${linePts.slice(0, -1).map((pt) => `<circle cx="${pt.x.toFixed(1)}" cy="${pt.y.toFixed(1)}" r="2.5" fill="var(--surface-1)" stroke="${lineColor}" stroke-width="1.6" />`).join("")}
+      <circle class="divLinePulse" cx="${lastPt.x.toFixed(1)}" cy="${lastPt.y.toFixed(1)}" r="7" fill="color-mix(in srgb, ${lineColor} 35%, transparent)" />
+      <circle cx="${lastPt.x.toFixed(1)}" cy="${lastPt.y.toFixed(1)}" r="4" fill="${lineColor}" stroke="var(--surface-1)" stroke-width="1.5" />
+      <text x="${lastPt.x.toFixed(1)}" y="${(lastPt.y - 11).toFixed(1)}" text-anchor="end" font-size="11" font-weight="700" fill="${lineColor}">${krwCompact(cumulative[cumulative.length - 1])}</text>
+    `;
+    renderMonthAxis("divComboAxis", months);
+
+    legendEl.innerHTML = series.map((s) => `
+      <div class="item"><span class="swatch" style="background:${s.color}"></span>${s.name}</div>
+    `).join("") + `
+      <div class="item"><span class="swatch" style="background:${lineColor}; border-radius:50%;"></span>누적 합계</div>
     `;
   }
 
