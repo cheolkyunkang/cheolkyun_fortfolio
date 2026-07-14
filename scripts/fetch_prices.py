@@ -32,10 +32,14 @@ INDEX_TICKERS = {
 }
 
 
+# 스파크라인에 보여줄 일봉 히스토리 길이(거래일 기준)
+SPARKLINE_DAYS = 10
+
+
 def fetch_yahoo(ticker):
-    """개별 종목용: 현재가/전일종가/통화 + 스파크라인용 최근 종가 히스토리."""
+    """개별 종목용: 현재가/전일종가/통화 + 스파크라인용 최근 일봉(종가) 히스토리."""
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
-    r = requests.get(url, headers=HEADERS, timeout=TIMEOUT, params={"range": "5d", "interval": "15m"})
+    r = requests.get(url, headers=HEADERS, timeout=TIMEOUT, params={"range": "1mo", "interval": "1d"})
     r.raise_for_status()
     data = r.json()
     result = data["chart"]["result"][0]
@@ -48,7 +52,7 @@ def fetch_yahoo(ticker):
     try:
         closes = result["indicators"]["quote"][0]["close"] or []
         closes = [c for c in closes if c is not None]
-        closes = closes[-40:]
+        closes = closes[-SPARKLINE_DAYS:]
     except Exception:  # noqa: BLE001
         closes = []
     return {
@@ -61,9 +65,9 @@ def fetch_yahoo(ticker):
 
 
 def fetch_yahoo_index(ticker):
-    """지수용: 현재가/전일종가 + 스파크라인용 최근 종가 히스토리."""
+    """지수용: 현재가/전일종가 + 스파크라인용 최근 일봉(종가) 히스토리."""
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
-    r = requests.get(url, headers=HEADERS, timeout=TIMEOUT, params={"range": "5d", "interval": "15m"})
+    r = requests.get(url, headers=HEADERS, timeout=TIMEOUT, params={"range": "1mo", "interval": "1d"})
     r.raise_for_status()
     data = r.json()
     result = data["chart"]["result"][0]
@@ -76,7 +80,7 @@ def fetch_yahoo_index(ticker):
     try:
         closes = result["indicators"]["quote"][0]["close"] or []
         closes = [c for c in closes if c is not None]
-        closes = closes[-40:]
+        closes = closes[-SPARKLINE_DAYS:]
     except Exception:  # noqa: BLE001
         closes = []
     return {

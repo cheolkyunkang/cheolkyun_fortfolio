@@ -137,10 +137,8 @@
   .blinkDot { width: 7px; height: 7px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 60%, transparent); animation: blink 1.6s ease-in-out infinite; }
   @keyframes glowPulse { 0%, 100% { opacity: 0.55; transform: scale(0.96); } 50% { opacity: 0.9; transform: scale(1.04); } }
   @keyframes blink { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent); } 50% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--good) 0%, transparent); } }
-  .divLinePulse { animation: divDotPulse 2.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-  @keyframes divDotPulse { 0%, 100% { opacity: 0.55; transform: scale(0.85); } 50% { opacity: 0.05; transform: scale(1.8); } }
   @media (prefers-reduced-motion: reduce) {
-    .aiOrbWrap::before, .blinkDot, .divLinePulse { animation: none; }
+    .aiOrbWrap::before, .blinkDot { animation: none; }
   }
 
   /* ---------- 통계 타일 ---------- */
@@ -208,15 +206,6 @@
   .tickerSpark { width: 100%; height: 18px; margin-top: 4px; display: block; }
 
   /* ---------- 배당 ---------- */
-  .divLineWrap { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
-  .divLineWrap .title { font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 10px; }
-  #divComboChart { width: 100%; height: 200px; display: block; }
-  .divLineAxis { display: flex; justify-content: space-between; margin-top: 6px; padding-left: 52px; padding-right: 52px; }
-  .divAxisCaption { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); padding: 0 52px; margin-top: 2px; }
-  .divLineAxis span { font-size: 10px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
-  .divLineLegend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
-  .divLineLegend .item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-secondary); }
-  .divLineLegend .swatch { width: 10px; height: 10px; border-radius: 3px; flex: none; }
   .divGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
   .divCard { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
   .divCard .head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
@@ -369,13 +358,6 @@
 
   <section>
     <h2>💰 배당 현황</h2>
-    <div class="divLineWrap">
-      <div class="title">월별 배당 수령액 (종목별) &amp; 누적 합계</div>
-      <svg id="divComboChart" viewBox="0 0 640 200" preserveAspectRatio="none"></svg>
-      <div class="divLineAxis" id="divComboAxis"></div>
-      <div class="divAxisCaption"><span>◀ 누적 합계(좌축)</span><span>월별 합계(우축) ▶</span></div>
-      <div class="divLineLegend" id="divComboLegend"></div>
-    </div>
     <div class="divGrid" id="dividendGrid"></div>
   </section>
 
@@ -727,9 +709,6 @@
     // ---- 종목별 실시간 시세 카드 ----
     renderTickerGrid(positions, metrics);
 
-    // ---- 월별 배당 복합 차트 (종목별 막대 + 누적 꺾은선) ----
-    renderDividendCombo(positions);
-
     // ---- 배당 카드 ----
     const divGrid = document.getElementById("dividendGrid");
     divGrid.innerHTML = positions.filter((p) => p.isDividendStock).map((p, idx) => {
@@ -892,148 +871,6 @@
         </div>
       `;
     }).join("");
-  }
-
-  // ---------------- 월별 배당 데이터 공통 집계 ----------------
-  function krwCompact(v) {
-    return `₩${fmt(v / 1000, { maximumFractionDigits: 0 })}K`;
-  }
-
-  function buildMonthlyDividendData(positions) {
-    const fxRate = (pricesData && pricesData.fxRate) || null;
-    const divPositions = positions.filter((p) => p.isDividendStock && (p.dividends || []).length);
-    const perStockMonthly = divPositions.map((p) => {
-      const monthly = {};
-      (p.dividends || []).forEach((d) => {
-        const month = d.date.slice(0, 7);
-        const amtKrw = p.currency === "KRW" ? d.amount : (p.avgFxRate ? d.amount * p.avgFxRate : (fxRate ? d.amount * fxRate : null));
-        if (amtKrw == null) return;
-        monthly[month] = (monthly[month] || 0) + amtKrw;
-      });
-      return monthly;
-    });
-    const monthSet = new Set();
-    perStockMonthly.forEach((m) => Object.keys(m).forEach((k) => monthSet.add(k)));
-    const months = Array.from(monthSet).sort();
-    const series = divPositions.map((p, idx) => ({
-      name: p.name,
-      color: SERIES[idx % SERIES.length],
-      values: months.map((m) => perStockMonthly[idx][m] || 0),
-    }));
-    return { months, series };
-  }
-
-  function renderMonthAxis(elId, months) {
-    const axis = document.getElementById(elId);
-    if (!months.length) { axis.innerHTML = ""; return; }
-    const labelEvery = Math.max(1, Math.ceil(months.length / 7));
-    axis.innerHTML = months.map((m, i) => {
-      const show = i % labelEvery === 0 || i === months.length - 1;
-      return `<span>${show ? m.slice(2).replace("-", ".") : ""}</span>`;
-    }).join("");
-  }
-
-  // ---------------- 월별 배당 복합 차트 (종목별 막대 + 누적 꺾은선, 단일 Y축) ----------------
-  function renderDividendCombo(positions) {
-    const svg = document.getElementById("divComboChart");
-    const legendEl = document.getElementById("divComboLegend");
-    const { months, series } = buildMonthlyDividendData(positions);
-
-    if (!months.length) {
-      svg.innerHTML = "";
-      legendEl.innerHTML = `<span style="font-size:12px;color:var(--text-muted);">배당 내역이 없어요</span>`;
-      renderMonthAxis("divComboAxis", months);
-      return;
-    }
-
-    const monthTotals = months.map((_, i) => series.reduce((s, se) => s + se.values[i], 0));
-    let running = 0;
-    const cumulative = monthTotals.map((v) => (running += v));
-
-    // 좌축 = 누적 합계 스케일, 우축 = 월별 합계 스케일. 두 축 모두 같은 높이 범위(padT~baselineY)를 공유해서
-    // 막대가 좌측 꺾은선과 비슷한 정도로 차트를 꽉 채우도록 조정한다 (진짜 이중 Y축).
-    const w = 640, h = 200, padL = 52, padR = 52, padT = 26, padB = 8;
-    const maxLeft = Math.max(1, ...cumulative);
-    const maxRight = Math.max(1, ...monthTotals);
-    const yOfLeft = (v) => padT + (1 - v / maxLeft) * (h - padT - padB);
-    const yOfRight = (v) => padT + (1 - v / maxRight) * (h - padT - padB);
-    const baselineY = h - padB;
-    const groupW = (w - padL - padR) / months.length;
-    const barW = Math.min(26, groupW * 0.5);
-    const xOf = (i) => padL + groupW * (i + 0.5);
-
-    const gridN = 4;
-    let gridSvg = "", yLabelsSvg = "";
-    for (let i = 0; i <= gridN; i++) {
-      const y = padT + (1 - i / gridN) * (h - padT - padB);
-      const leftV = (maxLeft * i) / gridN;
-      const rightV = (maxRight * i) / gridN;
-      gridSvg += `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${w - padR}" y2="${y.toFixed(1)}" stroke="var(--grid)" stroke-width="1" />`;
-      yLabelsSvg += `<text x="${padL - 8}" y="${(y + 3).toFixed(1)}" text-anchor="end" font-size="10" fill="var(--text-muted)">${krwCompact(leftV)}</text>`;
-      yLabelsSvg += `<text x="${w - padR + 8}" y="${(y + 3).toFixed(1)}" text-anchor="start" font-size="10" fill="var(--text-muted)">${krwCompact(rightV)}</text>`;
-    }
-
-    // 종목별 그라디언트 정의 (막대용)
-    const barGradDefs = series.map((s, idx) => `
-      <linearGradient id="divBarGrad${idx}" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="color-mix(in srgb, ${s.color} 62%, white)" />
-        <stop offset="100%" stop-color="${s.color}" />
-      </linearGradient>
-    `).join("");
-
-    // 종목별 스택 막대 (월별 수령액, 우축 스케일)
-    let barsSvg = "";
-    months.forEach((m, i) => {
-      const cx = xOf(i);
-      let acc = 0;
-      series.forEach((s, sIdx) => {
-        const v = s.values[i];
-        if (v <= 0) return;
-        const y0 = yOfRight(acc);
-        const y1 = yOfRight(acc + v);
-        const segH = Math.max(0, y0 - y1 - (acc > 0 ? 2 : 0)); // 스택 세그먼트 사이 2px 간격
-        const rectY = y1 + (acc > 0 ? 2 : 0);
-        barsSvg += `<rect x="${(cx - barW / 2).toFixed(1)}" y="${rectY.toFixed(1)}" width="${barW.toFixed(1)}" height="${segH.toFixed(1)}" rx="2.5" fill="url(#divBarGrad${sIdx})" />`;
-        acc += v;
-      });
-    });
-
-    // 누적 합계 꺾은선 (좌축 스케일) - 브랜드 액센트 색 + 아래쪽 그라디언트 음영
-    const linePts = cumulative.map((v, i) => ({ x: xOf(i), y: yOfLeft(v) }));
-    const linePath = linePts.map((pt, i) => `${i === 0 ? "M" : "L"} ${pt.x.toFixed(1)} ${pt.y.toFixed(1)}`).join(" ");
-    const areaPath = `${linePath} L ${linePts[linePts.length - 1].x.toFixed(1)} ${baselineY} L ${linePts[0].x.toFixed(1)} ${baselineY} Z`;
-    const lastPt = linePts[linePts.length - 1];
-    const lineColor = "var(--series-1)";
-
-    svg.innerHTML = `
-      <defs>
-        ${barGradDefs}
-        <linearGradient id="divLineAreaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="color-mix(in srgb, ${lineColor} 28%, transparent)" />
-          <stop offset="100%" stop-color="color-mix(in srgb, ${lineColor} 0%, transparent)" />
-        </linearGradient>
-        <filter id="divLineShadow" filterUnits="userSpaceOnUse" x="-20" y="-30" width="680" height="260">
-          <feDropShadow dx="0" dy="1" stdDeviation="1.6" flood-color="${lineColor}" flood-opacity="0.35" />
-        </filter>
-      </defs>
-      ${gridSvg}
-      <line x1="${padL}" y1="${baselineY}" x2="${w - padR}" y2="${baselineY}" stroke="var(--baseline)" stroke-width="1" />
-      ${yLabelsSvg}
-      ${barsSvg}
-      <path d="${areaPath}" fill="url(#divLineAreaGrad)" stroke="none" />
-      <path d="${linePath}" fill="none" stroke="${lineColor}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#divLineShadow)" />
-      ${linePts.slice(0, -1).map((pt) => `<circle cx="${pt.x.toFixed(1)}" cy="${pt.y.toFixed(1)}" r="2.5" fill="var(--surface-1)" stroke="${lineColor}" stroke-width="1.6" />`).join("")}
-      <circle class="divLinePulse" cx="${lastPt.x.toFixed(1)}" cy="${lastPt.y.toFixed(1)}" r="7" fill="color-mix(in srgb, ${lineColor} 35%, transparent)" />
-      <circle cx="${lastPt.x.toFixed(1)}" cy="${lastPt.y.toFixed(1)}" r="4" fill="${lineColor}" stroke="var(--surface-1)" stroke-width="1.5" />
-      <text x="${lastPt.x.toFixed(1)}" y="${(lastPt.y - 11).toFixed(1)}" text-anchor="end" font-size="11" font-weight="700" fill="${lineColor}">${krwCompact(cumulative[cumulative.length - 1])}</text>
-    `;
-    renderMonthAxis("divComboAxis", months);
-
-    legendEl.innerHTML = series.map((s) => `
-      <div class="item"><span class="swatch" style="background:${s.color}"></span>${s.name}</div>
-    `).join("") + `
-      <div class="item"><span class="swatch" style="background:${lineColor}; border-radius:50%;"></span>누적 합계</div>
-    `;
   }
 
   // ---------------- AI 파티클 스피어 ----------------

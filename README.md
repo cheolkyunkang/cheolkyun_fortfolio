@@ -4,11 +4,11 @@
 
 ## 구성
 
-- `index.html` — 대시보드 본체 (viewer 기본 공개 + admin 비밀번호 로그인, 국내/미국 지수 패널, AI 스피어, 종목별 실시간 시세 카드(가격·등락률·미니 스파크라인), 종목별 수익률/손익/평가금액/환차손익, 월별 배당 수령액 복합 차트(누적 꺾은선 + 종목별 막대) 및 배당 현황·뉴스, 종목 추가·수정 폼)
+- `index.html` — 대시보드 본체 (viewer 기본 공개 + admin 비밀번호 로그인, 국내/미국 지수 패널, AI 스피어, 종목별 실시간 시세 카드(가격·등락률·미니 일봉 스파크라인), 종목별 수익률/손익/평가금액/환차손익, 종목별 배당 현황(누적 배당수익률 + 월별 막대) 및 뉴스, 종목 추가·수정 폼)
 - `data/positions.json` — 보유 종목 원장 (종목명, 티커, 수량, 장부가, 매입금액, 매입평균환율, 배당 내역). 대시보드의 입력 폼으로 수정하면 이 파일이 자동으로 갱신됩니다.
-- `data/prices.json` — 최신 시세/환율/지수(각 종목별 최근 시세 히스토리 포함, 실시간 시세 카드의 스파크라인에 사용). `scripts/fetch_prices.py`가 자동으로 채웁니다.
+- `data/prices.json` — 최신 시세/환율/지수(각 종목별 최근 10거래일 일봉 히스토리 포함, 실시간 시세 카드와 지수 패널의 스파크라인에 사용). `scripts/fetch_prices.py`가 자동으로 채웁니다.
 - `data/news.json` — 종목 관련 뉴스·배당 소식. `scripts/fetch_news.py`가 자동으로 채웁니다.
-- `scripts/fetch_prices.py` — Yahoo Finance(1차) / Stooq(2차)에서 종목별 시세·최근 가격 히스토리와 코스피·코스닥·나스닥·S&P500 지수를, Yahoo 또는 open.er-api.com에서 원/달러 환율을 가져오는 스크립트
+- `scripts/fetch_prices.py` — Yahoo Finance(1차) / Stooq(2차)에서 종목별 시세·최근 10거래일 일봉 히스토리와 코스피·코스닥·나스닥·S&P500 지수를, Yahoo 또는 open.er-api.com에서 원/달러 환율을 가져오는 스크립트
 - `scripts/fetch_news.py` — Google 뉴스 RSS에서 종목별 뉴스와 배당 관련 뉴스를 가져오는 스크립트
 - `.github/workflows/update-prices.yml` — 시세를 갱신하는 워크플로우(약 20분 간격, 정각 부하를 피해 4/24/44분에 실행 + 푸시 충돌 시 자동 재시도)
 - `.github/workflows/update-news.yml` — 뉴스를 갱신하는 워크플로우(1시간 간격, 22분에 실행 + 푸시 충돌 시 자동 재시도)
