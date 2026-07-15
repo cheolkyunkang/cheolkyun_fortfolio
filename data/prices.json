@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-07-15T08:13:20.159005+09:00",
-  "fxRate": 1487.54,
+  "updatedAt": "2026-07-15T09:07:51.923436+09:00",
+  "fxRate": 1488.78,
   "fxSource": "yahoo",
   "prices": {
     "360750.KS": {
       "price": 27910.0,
-      "prevClose": 27880.0,
+      "prevClose": 28220.0,
       "currency": "KRW",
       "history": [
         28865.0,
@@ -115,8 +115,8 @@
   "indices": {
     "KOSPI": {
       "price": 6856.83,
-      "prevClose": 8123.62,
-      "changePct": -15.593910104116146,
+      "prevClose": 8545.98,
+      "changePct": -19.765433572276084,
       "history": [
         8476.48046875,
         8303.41015625,
@@ -133,8 +133,8 @@
     },
     "KOSDAQ": {
       "price": 783.98,
-      "prevClose": 1029.05,
-      "changePct": -23.815169330936296,
+      "prevClose": 1034.03,
+      "changePct": -24.18208369196251,
       "history": [
         916.1799926757812,
         929.3499755859375,
