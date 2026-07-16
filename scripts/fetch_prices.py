@@ -41,10 +41,13 @@ def _fetch_yahoo_chart(ticker):
 
     주의: Yahoo 차트 API의 meta.previousClose / meta.chartPreviousClose 필드는
     range=1mo&interval=1d 조합(특히 지수 티커)에서 실제 전일 종가와 무관한 값을
-    반환하는 경우가 있어(예: 몇 주 전 값), 등락률이 실제와 크게 어긋나는 버그가
-    있었다. 그래서 meta의 전일종가 필드를 신뢰하지 않고, 우리가 직접 받아온
-    일봉 종가 히스토리의 "마지막에서 두 번째" 값을 전일종가로 사용한다 —
-    이렇게 하면 스파크라인에 보이는 값과 등락률이 항상 일치한다.
+    반환하는 경우가 있고(예: 몇 주 전 값), meta.regularMarketPrice 조차도 같은
+    응답의 일봉 히스토리 마지막 값과 크게 어긋나는 경우가 확인됐다(예: 코스피가
+    실제로는 하락 중인데 meta 값만 보면 +7%로 계산되는 버그). 즉 이 엔드포인트
+    조합에서는 meta 필드 전반을 신뢰할 수 없다고 보고, 현재가/전일종가 모두
+    우리가 직접 받아온 일봉 종가 히스토리에서 직접 계산한다 (마지막 값 = 현재가,
+    마지막에서 두 번째 값 = 전일종가). 이렇게 하면 화면의 스파크라인·현재가·
+    등락률이 항상 서로 일치한다. 히스토리가 부족할 때만 meta 값으로 폴백한다.
     """
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
     r = requests.get(url, headers=HEADERS, timeout=TIMEOUT, params={"range": "1mo", "interval": "1d"})
@@ -52,9 +55,6 @@ def _fetch_yahoo_chart(ticker):
     data = r.json()
     result = data["chart"]["result"][0]
     meta = result["meta"]
-    price = meta.get("regularMarketPrice")
-    if price is None:
-        raise ValueError("no regularMarketPrice")
     closes = []
     try:
         closes = result["indicators"]["quote"][0]["close"] or []
@@ -63,9 +63,16 @@ def _fetch_yahoo_chart(ticker):
     except Exception:  # noqa: BLE001
         closes = []
     if len(closes) >= 2:
+        price = closes[-1]
         prev_close = closes[-2]
-    else:
+    elif len(closes) == 1:
+        price = closes[-1]
         prev_close = meta.get("previousClose") or meta.get("chartPreviousClose")
+    else:
+        price = meta.get("regularMarketPrice")
+        prev_close = meta.get("previousClose") or meta.get("chartPreviousClose")
+    if price is None:
+        raise ValueError("no price available (neither history nor regularMarketPrice)")
     return meta, float(price), (float(prev_close) if prev_close is not None else None), closes
 
 

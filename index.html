@@ -108,7 +108,7 @@
   .topCol.center { align-items: center; justify-content: center; }
   .panelCard { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
   .panelCard h2 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-secondary); margin: 0 0 10px; display: flex; align-items: center; gap: 6px; }
-  .flagIcon { font-size: 22px; line-height: 1; }
+  .flagIcon { width: 24px; height: 16px; flex: none; border-radius: 2px; display: block; }
   .panelCard.fill { display: flex; flex-direction: column; height: 100%; }
   .panelCard.fill .idxRows { flex: 1; display: flex; flex-direction: column; justify-content: space-around; }
   .idxRow { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--grid); }
@@ -198,12 +198,12 @@
   .tickerGrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
   @media (max-width: 940px) { .tickerGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   @media (max-width: 600px) { .tickerGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; } }
-  .tickerCard { background: var(--surface-1); border: 1px solid var(--border); border-radius: 9px; padding: 7px 9px; min-width: 0; }
-  .tickerCard .name { font-weight: 700; font-size: 10.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; color: var(--text-secondary); }
-  .tickerCard .priceRow { display: flex; align-items: baseline; justify-content: space-between; gap: 5px; }
-  .tickerCard .price { font-size: 12.5px; font-weight: 700; font-variant-numeric: tabular-nums; }
-  .tickerCard .chg { font-size: 9.5px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .tickerSpark { width: 100%; height: 18px; margin-top: 4px; display: block; }
+  .tickerCard { background: var(--surface-1); border: 1px solid var(--border); border-radius: 9px; padding: 8px 10px; min-width: 0; display: flex; align-items: center; gap: 6px; }
+  .tickerCard .name { font-weight: 700; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-secondary); flex: 0 1 auto; max-width: 48%; }
+  .tickerCard .vals { flex: none; text-align: right; }
+  .tickerCard .price { font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; display: block; }
+  .tickerCard .chg { font-size: 9.5px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; display: block; margin-top: 1px; }
+  .tickerSpark { flex: 1 1 auto; min-width: 0; height: 20px; display: block; }
 
   /* ---------- 배당 ---------- */
   .divGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
@@ -257,7 +257,7 @@
     .aiOrbWrap, #aiSphere { width: 170px; height: 170px; }
     .panelCard { padding: 13px 14px; }
     .panelCard h2 { font-size: 12px; }
-    .flagIcon { font-size: 18px; }
+    .flagIcon { width: 20px; height: 13.3px; }
     .idxName { font-size: 13px; width: 54px; }
     .idxPrice { font-size: 13px; }
     .idxChange { font-size: 11px; }
@@ -300,7 +300,7 @@
   <section class="topGrid">
     <div class="topCol">
       <div class="panelCard">
-        <h2><span class="flagIcon">🇰🇷</span> 국내 증시</h2>
+        <h2><svg class="flagIcon" viewBox="0 0 30 20" aria-label="대한민국"><rect width="30" height="20" fill="#fff"/><g transform="translate(15,10)"><circle r="4.2" fill="#fff"/><path d="M0,-4.2 A2.1,2.1 0 0,1 0,0 A2.1,2.1 0 0,0 0,4.2 A4.2,4.2 0 0,1 0,-4.2 Z" fill="#c60c30"/><path d="M0,4.2 A2.1,2.1 0 0,1 0,0 A2.1,2.1 0 0,0 0,-4.2 A4.2,4.2 0 0,1 0,4.2 Z" fill="#003478"/></g><g stroke="#000" stroke-width="0.9" stroke-linecap="round"><g transform="translate(4.2,4)"><line x1="-2" y1="-1.3" x2="2" y2="-1.3"/><line x1="-2" y1="0" x2="2" y2="0"/><line x1="-2" y1="1.3" x2="2" y2="1.3"/></g><g transform="translate(25.8,4)"><line x1="-2" y1="-1.3" x2="-0.4" y2="-1.3"/><line x1="0.4" y1="-1.3" x2="2" y2="-1.3"/><line x1="-2" y1="0" x2="2" y2="0"/><line x1="-2" y1="1.3" x2="-0.4" y2="1.3"/><line x1="0.4" y1="1.3" x2="2" y2="1.3"/></g><g transform="translate(4.2,16)"><line x1="-2" y1="-1.3" x2="-0.4" y2="-1.3"/><line x1="0.4" y1="-1.3" x2="2" y2="-1.3"/><line x1="-2" y1="0" x2="2" y2="0"/><line x1="-2" y1="1.3" x2="-0.4" y2="1.3"/><line x1="0.4" y1="1.3" x2="2" y2="1.3"/></g><g transform="translate(25.8,16)"><line x1="-2" y1="-1.3" x2="2" y2="-1.3"/><line x1="-2" y1="0" x2="-0.4" y2="0"/><line x1="0.4" y1="0" x2="2" y2="0"/><line x1="-2" y1="1.3" x2="2" y2="1.3"/></g></g><rect x="0.5" y="0.5" width="29" height="19" fill="none" stroke="#00000022" stroke-width="1"/></svg> 국내 증시</h2>
         <div class="idxRow" id="idxKOSPI"><span class="idxName">코스피</span><svg class="idxSpark"></svg><span class="idxVals">-</span></div>
         <div class="idxRow" id="idxKOSDAQ"><span class="idxName">코스닥</span><svg class="idxSpark"></svg><span class="idxVals">-</span></div>
       </div>
@@ -320,7 +320,7 @@
 
     <div class="topCol">
       <div class="panelCard fill">
-        <h2><span class="flagIcon">🇺🇸</span> 미국 증시</h2>
+        <h2><svg class="flagIcon" viewBox="0 0 30 20" aria-label="미국"><rect width="30" height="20" fill="#fff"/><g fill="#B22234"><rect y="0" width="30" height="1.54"/><rect y="3.08" width="30" height="1.54"/><rect y="6.15" width="30" height="1.54"/><rect y="9.23" width="30" height="1.54"/><rect y="12.31" width="30" height="1.54"/><rect y="15.38" width="30" height="1.54"/><rect y="18.46" width="30" height="1.54"/></g><rect width="13" height="10.77" fill="#3C3B6E"/><g fill="#fff"><circle cx="2.2" cy="1.6" r="0.55"/><circle cx="4.6" cy="1.6" r="0.55"/><circle cx="7" cy="1.6" r="0.55"/><circle cx="9.4" cy="1.6" r="0.55"/><circle cx="11.8" cy="1.6" r="0.55"/><circle cx="3.4" cy="3.2" r="0.55"/><circle cx="5.8" cy="3.2" r="0.55"/><circle cx="8.2" cy="3.2" r="0.55"/><circle cx="10.6" cy="3.2" r="0.55"/><circle cx="2.2" cy="4.8" r="0.55"/><circle cx="4.6" cy="4.8" r="0.55"/><circle cx="7" cy="4.8" r="0.55"/><circle cx="9.4" cy="4.8" r="0.55"/><circle cx="11.8" cy="4.8" r="0.55"/><circle cx="3.4" cy="6.4" r="0.55"/><circle cx="5.8" cy="6.4" r="0.55"/><circle cx="8.2" cy="6.4" r="0.55"/><circle cx="10.6" cy="6.4" r="0.55"/><circle cx="2.2" cy="8" r="0.55"/><circle cx="4.6" cy="8" r="0.55"/><circle cx="7" cy="8" r="0.55"/><circle cx="9.4" cy="8" r="0.55"/><circle cx="11.8" cy="8" r="0.55"/><circle cx="3.4" cy="9.6" r="0.55"/><circle cx="5.8" cy="9.6" r="0.55"/><circle cx="8.2" cy="9.6" r="0.55"/><circle cx="10.6" cy="9.6" r="0.55"/></g><rect x="0.5" y="0.5" width="29" height="19" fill="none" stroke="#00000022" stroke-width="1"/></svg> 미국 증시</h2>
         <div class="idxRows">
           <div class="idxRow" id="idxNASDAQ"><span class="idxName">나스닥</span><svg class="idxSpark"></svg><span class="idxVals">-</span></div>
           <div class="idxRow" id="idxSP500"><span class="idxName">S&P500</span><svg class="idxSpark"></svg><span class="idxVals">-</span></div>
@@ -860,14 +860,14 @@
       const path = sparklinePath(history, 100, 32);
       return `
         <div class="tickerCard">
-          <div class="name" title="${p.name}">${p.name}</div>
-          <div class="priceRow">
-            <span class="price">${priceStr}</span>
-            <span class="chg" style="color:${changePct != null ? color : "var(--text-muted)"}">${changePct != null ? (up ? "▲" : "▼") + " " + pct(changePct) : "-"}</span>
-          </div>
+          <span class="name" title="${p.name}">${p.name}</span>
           <svg class="tickerSpark" viewBox="0 0 100 32" preserveAspectRatio="none">
             ${path ? `<path d="${path}" fill="none" stroke="${changePct != null ? color : "var(--text-muted)"}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>` : ""}
           </svg>
+          <span class="vals">
+            <span class="price">${priceStr}</span>
+            <span class="chg" style="color:${changePct != null ? color : "var(--text-muted)"}">${changePct != null ? (up ? "▲" : "▼") + " " + pct(changePct) : "-"}</span>
+          </span>
         </div>
       `;
     }).join("");

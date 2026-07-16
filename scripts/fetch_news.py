@@ -9,6 +9,7 @@ import time
 import urllib.parse
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone, timedelta
+from email.utils import parsedate_to_datetime
 
 import requests
 
@@ -22,6 +23,17 @@ HEADERS = {
 TIMEOUT = 10
 MAX_GENERAL = 3
 MAX_DIVIDEND = 2
+
+
+def _parse_pub_date(pub_date):
+    """RFC 822 pubDate 문자열을 정렬 가능한 datetime으로 변환. 실패 시 아주 과거 값 반환."""
+    try:
+        dt = parsedate_to_datetime(pub_date)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt
+    except Exception:  # noqa: BLE001
+        return datetime.min.replace(tzinfo=timezone.utc)
 
 
 def fetch_rss(query):
@@ -40,6 +52,10 @@ def fetch_rss(query):
         source = source_el.text.strip() if source_el is not None and source_el.text else ""
         if title and link:
             items.append({"title": title, "link": link, "source": source, "pubDate": pub_date})
+    # 구글 뉴스 RSS 검색 결과는 기본적으로 "관련도" 순이라, 같은 검색어로 매번 같은
+    # (오래된) 기사가 계속 1순위로 뽑히는 경우가 많다. 최신 소식이 잘 보이도록
+    # 발행일(pubDate) 최신순으로 다시 정렬해서 pick_top이 최신 기사부터 고르게 한다.
+    items.sort(key=lambda it: _parse_pub_date(it["pubDate"]), reverse=True)
     return items
 
 

@@ -8,8 +8,8 @@
 - `data/positions.json` — 보유 종목 원장 (종목명, 티커, 수량, 장부가, 매입금액, 매입평균환율, 배당 내역). 대시보드의 입력 폼으로 수정하면 이 파일이 자동으로 갱신됩니다.
 - `data/prices.json` — 최신 시세/환율/지수(각 종목별 최근 10거래일 일봉 히스토리 포함, 실시간 시세 카드와 지수 패널의 스파크라인에 사용). `scripts/fetch_prices.py`가 자동으로 채웁니다.
 - `data/news.json` — 종목 관련 뉴스·배당 소식. `scripts/fetch_news.py`가 자동으로 채웁니다.
-- `scripts/fetch_prices.py` — Yahoo Finance(1차) / Stooq(2차)에서 종목별 시세·최근 10거래일 일봉 히스토리와 코스피·코스닥·나스닥·S&P500 지수를, Yahoo 또는 open.er-api.com에서 원/달러 환율을 가져오는 스크립트
-- `scripts/fetch_news.py` — Google 뉴스 RSS에서 종목별 뉴스와 배당 관련 뉴스를 가져오는 스크립트
+- `scripts/fetch_prices.py` — Yahoo Finance(1차) / Stooq(2차)에서 종목별 시세·최근 10거래일 일봉 히스토리와 코스피·코스닥·나스닥·S&P500 지수를, Yahoo 또는 open.er-api.com에서 원/달러 환율을 가져오는 스크립트. 현재가/전일종가는 Yahoo API의 메타 필드 대신 직접 받아온 일봉 히스토리에서 계산해 등락률 오류를 방지합니다.
+- `scripts/fetch_news.py` — Google 뉴스 RSS에서 종목별 뉴스와 배당 관련 뉴스를 가져오는 스크립트. 검색 결과를 발행일 최신순으로 정렬한 뒤 상위 항목을 뽑아 최신 소식이 우선 반영되도록 합니다.
 - `.github/workflows/update-prices.yml` — 시세를 갱신하는 워크플로우(약 20분 간격, 정각 부하를 피해 4/24/44분에 실행 + 푸시 충돌 시 자동 재시도)
 - `.github/workflows/update-news.yml` — 뉴스를 갱신하는 워크플로우(1시간 간격, 22분에 실행 + 푸시 충돌 시 자동 재시도)
 
