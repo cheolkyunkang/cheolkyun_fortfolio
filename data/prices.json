@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-07-16T21:06:41.274327+09:00",
-  "fxRate": 1479.35,
+  "updatedAt": "2026-07-16T21:52:29.383782+09:00",
+  "fxRate": 1481.0,
   "fxSource": "yahoo",
   "prices": {
     "360750.KS": {
@@ -40,7 +40,7 @@
       "source": "yahoo"
     },
     "JEPI": {
-      "price": 56.62,
+      "price": 56.619998931884766,
       "prevClose": 56.58000183105469,
       "currency": "USD",
       "history": [
@@ -58,7 +58,7 @@
       "source": "yahoo"
     },
     "JEPQ": {
-      "price": 60.12,
+      "price": 60.119998931884766,
       "prevClose": 60.189998626708984,
       "currency": "USD",
       "history": [
@@ -76,7 +76,7 @@
       "source": "yahoo"
     },
     "KO": {
-      "price": 82.45,
+      "price": 82.44999694824219,
       "prevClose": 83.08000183105469,
       "currency": "USD",
       "history": [
@@ -94,7 +94,7 @@
       "source": "yahoo"
     },
     "SCHD": {
-      "price": 32.34,
+      "price": 32.34000015258789,
       "prevClose": 32.20000076293945,
       "currency": "USD",
       "history": [
@@ -114,9 +114,9 @@
   },
   "indices": {
     "KOSPI": {
-      "price": 6820.6,
+      "price": 6820.60009765625,
       "prevClose": 7284.41015625,
-      "changePct": -6.367161462648449,
+      "changePct": -6.367160122028583,
       "history": [
         8088.33984375,
         8051.330078125,
@@ -132,9 +132,9 @@
       "source": "yahoo"
     },
     "KOSDAQ": {
-      "price": 791.84,
+      "price": 791.8400268554688,
       "prevClose": 829.4299926757812,
-      "changePct": -4.532027176219429,
+      "changePct": -4.532023938397194,
       "history": [
         868.4099731445312,
         847.0700073242188,
@@ -150,9 +150,9 @@
       "source": "yahoo"
     },
     "NASDAQ": {
-      "price": 26269.227,
+      "price": 26269.23046875,
       "prevClose": 26107.009765625,
-      "changePct": 0.6213550913386863,
+      "changePct": 0.6213683780001316,
       "history": [
         26040.029296875,
         25832.669921875,
@@ -168,9 +168,9 @@
       "source": "yahoo"
     },
     "SP500": {
-      "price": 7572.4,
+      "price": 7572.39990234375,
       "prevClose": 7543.58984375,
-      "changePct": 0.3819157303981654,
+      "changePct": 0.38191443583878903,
       "history": [
         7483.22998046875,
         7483.240234375,
