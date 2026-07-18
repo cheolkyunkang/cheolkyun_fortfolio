@@ -1,5 +1,37 @@
 {
-  "updatedAt": "2026-07-19T06:05:16.504073+09:00",
-  "generalNews": [],
-  "dividendNews": []
+  "updatedAt": "2026-07-19T07:05:29.382898+09:00",
+  "generalNews": [
+    {
+      "title": "미래에셋자산운용 'TIGER 미국배당다우존스' 순자산 4조원 돌파 - 청년일보",
+      "link": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE8zNDFmZzhzMXZKbERXc3JlcVlhNkdHM0FlRG45NXNNWDR2ZVhOdXFjYjU3Q3hHTWs3VDRpUFB0LUFCX05YNFIxZE5PTUxRSjJOOEFmdjFUYi1LZFFQQWlfcHBaeTJMdTA?oc=5",
+      "source": "청년일보",
+      "pubDate": "Thu, 16 Jul 2026 08:19:18 GMT"
+    },
+    {
+      "title": "[서학개미 ETF 디코딩] ⑪ 인기몰이 배당 펀드 '슈드' 매력과 한계 - 뉴스핌",
+      "link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE81UGtmeGZ6elMyejNaLUZLcUd6Q3E2NkZCaUpTYVhmX3l0NDIwa09oZng1WmZpTkI0SmJPMHlTMzFfR2dIM3ltYVBxcDV4a2dFT21RRWpIMktLVy0z?oc=5",
+      "source": "뉴스핌",
+      "pubDate": "Wed, 20 May 2026 07:00:00 GMT"
+    },
+    {
+      "title": "'JEPI 수익률 앞지른 JEPQ'…나스닥 커버드콜 ETF로 자금 몰려 - 연합인포맥스",
+      "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTE1fSktTZFZ1dTJTQ2phTmZFWUhtTTRVYmhIN3I4eWxhOHgwcnBnUUhGY3lYNmkzZU5aU3FGeHA4bGNmUUZrZmJuZWw3TDRtamxDb3pnNi1wY3NUUmRQTzlxcEpmbzF3ZVJZUlV2Qkh3ejI?oc=5",
+      "source": "연합인포맥스",
+      "pubDate": "Thu, 11 Dec 2025 08:00:00 GMT"
+    }
+  ],
+  "dividendNews": [
+    {
+      "title": "미래에셋자산운용 'TIGER 미국배당다우존스' 순자산 4조원 돌파 - 청년일보",
+      "link": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE8zNDFmZzhzMXZKbERXc3JlcVlhNkdHM0FlRG45NXNNWDR2ZVhOdXFjYjU3Q3hHTWs3VDRpUFB0LUFCX05YNFIxZE5PTUxRSjJOOEFmdjFUYi1LZFFQQWlfcHBaeTJMdTA?oc=5",
+      "source": "청년일보",
+      "pubDate": "Thu, 16 Jul 2026 08:19:18 GMT"
+    },
+    {
+      "title": "미래에셋, 'TIGER 미국배당다우존스' 순자산 4조원 돌파…국내 상장 미국 배당주 ETF 최대 규모 - 핀테크경제신문",
+      "link": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE5Kc09RM3Zsbkw4VW5IaGluNUgtWjk1cGV0WGRHeUJIZUUzUlVvQVFoYjdmLWlKMDhWM1ZFTlN5RGVkRmtKN1QwMHdpZS1TOW5yOVlPX01iVkRUaDF6RGY3ZHhQTQ?oc=5",
+      "source": "핀테크경제신문",
+      "pubDate": "Thu, 16 Jul 2026 00:48:57 GMT"
+    }
+  ]
 }
