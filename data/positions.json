@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-09T14:04:11.063Z",
+  "updatedAt": "2026-08-09T14:06:04.561Z",
   "positions": [
     {
       "id": "tiger-sp500",
@@ -53,10 +53,10 @@
       "ticker": "SCHD",
       "market": "US",
       "currency": "USD",
-      "quantity": 1611,
-      "bookValue": 28.8692,
-      "purchaseAmount": 46508.2812,
-      "avgFxRate": 1451.9012,
+      "quantity": 1620,
+      "bookValue": 28.8961,
+      "purchaseAmount": 46811.682,
+      "avgFxRate": 1451.7264,
       "isDividendStock": true,
       "dividends": [
         {
