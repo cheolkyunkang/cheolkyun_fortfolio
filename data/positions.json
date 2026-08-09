@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-06T07:24:25.896Z",
+  "updatedAt": "2026-08-09T14:04:11.063Z",
   "positions": [
     {
       "id": "tiger-sp500",
@@ -7,9 +7,9 @@
       "ticker": "360750.KS",
       "market": "KR",
       "currency": "KRW",
-      "quantity": 1779,
-      "bookValue": 23766,
-      "purchaseAmount": 42280221,
+      "quantity": 1783,
+      "bookValue": 23774,
+      "purchaseAmount": 42388765,
       "avgFxRate": null,
       "isDividendStock": true,
       "dividends": [
