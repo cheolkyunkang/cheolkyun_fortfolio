@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-04T14:56:50.295Z",
+  "updatedAt": "2026-09-14T02:46:34.126Z",
   "positions": [
     {
       "id": "tiger-sp500",
@@ -203,9 +203,9 @@
       "ticker": "AAPL",
       "market": "US",
       "currency": "USD",
-      "quantity": 3.992,
-      "bookValue": 273.88,
-      "purchaseAmount": 1258.75,
+      "quantity": 4.9373,
+      "bookValue": 282.275,
+      "purchaseAmount": 1393.6768,
       "avgFxRate": 1475,
       "isDividendStock": false,
       "dividends": []
