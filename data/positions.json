@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-14T02:46:34.126Z",
+  "updatedAt": "2026-09-14T02:47:55.322Z",
   "positions": [
     {
       "id": "tiger-sp500",
@@ -216,9 +216,9 @@
       "ticker": "KO",
       "market": "US",
       "currency": "USD",
-      "quantity": 13.93,
-      "bookValue": 75.59,
-      "purchaseAmount": 1163.01,
+      "quantity": 17.09,
+      "bookValue": 77.7231,
+      "purchaseAmount": 1328.2894,
       "avgFxRate": 1475,
       "isDividendStock": false,
       "dividends": []
