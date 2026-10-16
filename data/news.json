@@ -1,5 +1,37 @@
 {
-  "updatedAt": "2026-10-16T20:18:07.771081+09:00",
-  "generalNews": [],
-  "dividendNews": []
+  "updatedAt": "2026-10-17T01:34:21.529783+09:00",
+  "generalNews": [
+    {
+      "title": "환헤지 ETF 한 달 5.6%p 앞섰다…총보수표에 없는 연 2% 스와프 비용 - 매일신문",
+      "link": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE5zYks3dzBWdkRCQUI1TTdSZ1JiRXZNbU5iYkV3R0R2eHkxT3dkN2RXejVETXd4NGNMQkhYUlpuNDBBVGRXaDZvYXBoS3dmRUt1dkE3SVFqRkNRa1ppWUJVRWR3?oc=5",
+      "source": "매일신문",
+      "pubDate": "Thu, 15 Oct 2026 21:59:00 GMT"
+    },
+    {
+      "title": "미래에셋 TIGER 미국배당다우존스 ETF, 올해 개인 순매수 1조2800억원 넘어 - 브릿지경제",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE9WQjVMbFNJb29kUVZwaGRwa3VhcmEwcUNuR0pfeEVxN1pQR2w0eE1XLXRZQVVCbWhpdXRzcm9xUTNJVHltTjVfNGFLVTg1QTdtYUE2eWdhYVJ5Zw?oc=5",
+      "source": "브릿지경제",
+      "pubDate": "Thu, 15 Oct 2026 01:06:00 GMT"
+    },
+    {
+      "title": "'JEPI 수익률 앞지른 JEPQ'…나스닥 커버드콜 ETF로 자금 몰려 - 연합인포맥스",
+      "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTE1fSktTZFZ1dTJTQ2phTmZFWUhtTTRVYmhIN3I4eWxhOHgwcnBnUUhGY3lYNmkzZU5aU3FGeHA4bGNmUUZrZmJuZWw3TDRtamxDb3pnNi1wY3NUUmRQTzlxcEpmbzF3ZVJZUlV2Qkh3ejI?oc=5",
+      "source": "연합인포맥스",
+      "pubDate": "Thu, 11 Dec 2025 08:00:00 GMT"
+    }
+  ],
+  "dividendNews": [
+    {
+      "title": "미래에셋 TIGER 미국배당다우존스 ETF, 개인 순매수 1위 - 더퍼블릭",
+      "link": "https://news.google.com/rss/articles/CBMia0FVX3lxTE50dXhYWHM0MkhXd3dkc21BdE92WVQzQ3JlSjJ6dUo0QXpGZG9OX05KRjY4YTZQNTN3N0tidU5KRGRkVWlkbUlqQWhSWUE1aDRZVmtpUXRrYVhEdlNmV2xYTUVXeGFnLUxNeWIw0gFvQVVfeXFMT0xYVWJtXzFTakxJX0drUVY3cjQxZElDQWh2VFdMRWdlVkRQRHZwTmhRMmU3aEo1NVdkOEJFZk1QS2xYd2NrcDZuZ2RvRWNVQTZRMFZpdkNmc1pSUjJyak00Z1MxSzk4ajEzaV83bXRJ?oc=5",
+      "source": "더퍼블릭",
+      "pubDate": "Fri, 16 Oct 2026 00:21:07 GMT"
+    },
+    {
+      "title": "미래에셋 TIGER 미국배당다우존스 ETF, 올해 개인 순매수 1조2800억원 넘어 - 브릿지경제",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE9WQjVMbFNJb29kUVZwaGRwa3VhcmEwcUNuR0pfeEVxN1pQR2w0eE1XLXRZQVVCbWhpdXRzcm9xUTNJVHltTjVfNGFLVTg1QTdtYUE2eWdhYVJ5Zw?oc=5",
+      "source": "브릿지경제",
+      "pubDate": "Thu, 15 Oct 2026 01:06:00 GMT"
+    }
+  ]
 }
