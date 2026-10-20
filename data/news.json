@@ -1,5 +1,37 @@
 {
-  "updatedAt": "2026-10-20T13:44:31.428911+09:00",
-  "generalNews": [],
-  "dividendNews": []
+  "updatedAt": "2026-10-20T18:59:38.731594+09:00",
+  "generalNews": [
+    {
+      "title": "ETF 순자산 1위 바뀌었다…TIGER 미국S&P500, KODEX200 추월 - ER 이코노믹리뷰",
+      "link": "https://news.google.com/rss/articles/CBMibEFVX3lxTE93S3BtdnhDVGY2ZWxfUFY5ZVcxUE1FblhITDh4TXlaR09PUm5VYUJkQjRNVU9hZW5pUTd6RjlITFpWTEhJWG1UR2VNUzZ5YVFIU0c5OFRoaDFyNC00U01uRDdqQzVNMXV3dy1CTA?oc=5",
+      "source": "ER 이코노믹리뷰",
+      "pubDate": "Mon, 19 Oct 2026 23:22:21 GMT"
+    },
+    {
+      "title": "카지노 100 억 연속 결과 표시의 순서 - Calgary Roughnecks",
+      "link": "https://news.google.com/rss/articles/CBMi5gJBVV95cUxOX09SNVZydVMzZDh5ZVplOHhpWTR2RDdRVHdWeFB0RE9GeEFBcEh6dW1jUlVEcjNqb1ZKU0JJS0RlVXBDclNjSzVjeTFUaVI5R0JRa3NYeUFROVg1MkZWNm9hdHZrZG10cnpZdDVpR2puS3NCaFZPblBENGdtcEp3Y0tZQXVuZVpISzBqak1pQ3pTSUhNWGtXcGUtUjU4dnQwWVE1MnNraG1ubzBnSUYtdDRVV3Y1b2FLZGRJS0Y0UGlEM2xJSWxyUmxESXpQRWZTTUR6Y093NG1mNi1Oc3JUWFg5OC1Qa2RBOGxtTWkzQTY0Z0thRVRMZ0FSSXBrdm5KeTVlOF9iVWFJTUN3Ql91a2dTdXpJMnRISndfM1p4NjJkRUxvZnJyYWNQS3diQmp5VHlzbUFjbGNVRHJHQ1EybEV6d0dCV0VaaFQyMzNWd2dpcXNFR1RQZlVxSndRRjBKVVpicWRn?oc=5",
+      "source": "Calgary Roughnecks",
+      "pubDate": "Sun, 18 Oct 2026 19:41:34 GMT"
+    },
+    {
+      "title": "'JEPI 수익률 앞지른 JEPQ'…나스닥 커버드콜 ETF로 자금 몰려 - 연합인포맥스",
+      "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTE1fSktTZFZ1dTJTQ2phTmZFWUhtTTRVYmhIN3I4eWxhOHgwcnBnUUhGY3lYNmkzZU5aU3FGeHA4bGNmUUZrZmJuZWw3TDRtamxDb3pnNi1wY3NUUmRQTzlxcEpmbzF3ZVJZUlV2Qkh3ejI?oc=5",
+      "source": "연합인포맥스",
+      "pubDate": "Thu, 11 Dec 2025 08:00:00 GMT"
+    }
+  ],
+  "dividendNews": [
+    {
+      "title": "[미래에셋자산운용] ‘TIGER 미국 타겟데일리커버드콜 ETF’ 3종 순매수 / 'TIGER 미국S&P500타겟데일리커버드콜' 10월 분배금 / 퇴직연금 기금형·TDF·OCIO 전략 / 전주사무소 개소 - 웹이코노미",
+      "link": "https://news.google.com/rss/articles/CBMickFVX3lxTFBkUlZfRXRnOTdzQjU2ZkVyUGlxSUFVcWh0dXk5RmVuX1FlWnBTbTFpRDdxRG5jSXBIZmFlZHhad19rSGdIeWs4YVVEb1FkbU5NOTBUNkJzRzloRmh4eTFNN204T094WWk0eFpfbWdqcl9ZUQ?oc=5",
+      "source": "웹이코노미",
+      "pubDate": "Sun, 18 Oct 2026 15:41:45 GMT"
+    },
+    {
+      "title": "미래에셋 TIGER 미국배당다우존스 ETF, 올해 개인 순매수 1조2800억원 넘어 - 브릿지경제",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE9WQjVMbFNJb29kUVZwaGRwa3VhcmEwcUNuR0pfeEVxN1pQR2w0eE1XLXRZQVVCbWhpdXRzcm9xUTNJVHltTjVfNGFLVTg1QTdtYUE2eWdhYVJ5Zw?oc=5",
+      "source": "브릿지경제",
+      "pubDate": "Thu, 15 Oct 2026 01:06:00 GMT"
+    }
+  ]
 }
