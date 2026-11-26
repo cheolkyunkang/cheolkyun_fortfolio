@@ -1,5 +1,37 @@
 {
-  "updatedAt": "2026-11-26T11:49:24.484172+09:00",
-  "generalNews": [],
-  "dividendNews": []
+  "updatedAt": "2026-11-26T21:20:04.182356+09:00",
+  "generalNews": [
+    {
+      "title": "미국 대표지수 ETF 쏠림 심화…키움증권·미래에셋증권 해외주식 거래 증가 기대 - 핀포인트뉴스",
+      "link": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBYU21EQ2xrQWJpQi1IVDk1bFFSMXZ0MTlUUkVFalExRjg2U2VoZGI1VkhwRno3ckFuQTlqbWdjUUdGVC1jc0h6QW1WWEo3ODBoamZic3owTWlRN2Nfd1lCUzBlV09PejZuTnBlX2VrZVNhWTDSAXdBVV95cUxQdm9GZVBCM1NvcGY4ODJtMl9MM29wdi1XWElKdDJCTFpGWFpIb2VoZ0NCc2lrRHB5MmJnVDB4Uk9tR1djUGUtN2VZb0FZdWRfTy1idl9OclQ3WjZWRmVhcnZsU0N0R1RRaDhlMkx0bkktTzdVRGdLaw?oc=5",
+      "source": "핀포인트뉴스",
+      "pubDate": "Thu, 26 Nov 2026 06:19:07 GMT"
+    },
+    {
+      "title": "AI 버블 우려 속 ‘안전자산’ 선호···SCHD 배당 ETF, VOO·QQQ 수익률 앞질러 - Benzinga",
+      "link": "https://news.google.com/rss/articles/CBMinAJBVV95cUxOM0QwWHhQRG9wM3pZT0xqdnE3Snk2ckF5eVdaMGxESHFfMDZjWEFPYWp4MkxpQzZwV3hqRzdBYXZrUXFPU3lqUlFqWGEwOGxyVEhNMHFQcjlZSDNRalZFSWI1RERnTTE3UXZYMTNXYUlrVW9EdVBxOVoyMk92cWdqUUJTemFDUWxWRnoxRlFGTFJwbVV6dkV3aG9KWk02eEo1LXp3amM2WU1xTlpuM2NvaTJjOFR1WHZJZ1Q0ZXZzeUZaSVRsbWUydW5iZlpXN0VoNUxyUDg1dmlfYUJsZnAwTkZsOUFRaUlBTFYwRkRjOFdDNmJSbGJEb01rR0FoeUxjOVRHZE8yUElSS3VmN1ZkZDlBOWNLT2stQi00Vg?oc=5",
+      "source": "Benzinga",
+      "pubDate": "Mon, 26 Oct 2026 07:00:00 GMT"
+    },
+    {
+      "title": "코스피 힘 못 쓰는데 2.8조 몰렸다…개미들 꽂힌 '이 상품' [이수의 ETF줌인] - 한국경제",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE56TUFETkRiS2M5UGEtempTQ1B0ZmhqaDNjM0owVS1ycFo2RjRmVjQ3MHJyR2lKUjM5V0RQOWNvM3lPQmFwc1BoTGFOZjZ6SXJVN0l4N2N1NVlWZw?oc=5",
+      "source": "한국경제",
+      "pubDate": "Sat, 31 Oct 2026 07:00:00 GMT"
+    }
+  ],
+  "dividendNews": [
+    {
+      "title": "[표] 미래에셋자산운용 TIGER 월배당 ETF 11월 분배금 내역 - 스마트투데이",
+      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE5QUmc3NHRaRlkxYkxMdDZvQkJvaTJ0aWs3SkZDZU5yMlV6NlRzWl9YNGFvX0Zwc0tYaDdWY0lBVzJTTDEzQ1pWdnhIOTFjVVJIaFJCeEFlLVZWV2R2ZEtF?oc=5",
+      "source": "스마트투데이",
+      "pubDate": "Thu, 26 Nov 2026 06:17:53 GMT"
+    },
+    {
+      "title": "AI 버블 우려 속 ‘안전자산’ 선호···SCHD 배당 ETF, VOO·QQQ 수익률 앞질러 - Benzinga",
+      "link": "https://news.google.com/rss/articles/CBMinAJBVV95cUxOM0QwWHhQRG9wM3pZT0xqdnE3Snk2ckF5eVdaMGxESHFfMDZjWEFPYWp4MkxpQzZwV3hqRzdBYXZrUXFPU3lqUlFqWGEwOGxyVEhNMHFQcjlZSDNRalZFSWI1RERnTTE3UXZYMTNXYUlrVW9EdVBxOVoyMk92cWdqUUJTemFDUWxWRnoxRlFGTFJwbVV6dkV3aG9KWk02eEo1LXp3amM2WU1xTlpuM2NvaTJjOFR1WHZJZ1Q0ZXZzeUZaSVRsbWUydW5iZlpXN0VoNUxyUDg1dmlfYUJsZnAwTkZsOUFRaUlBTFYwRkRjOFdDNmJSbGJEb01rR0FoeUxjOVRHZE8yUElSS3VmN1ZkZDlBOWNLT2stQi00Vg?oc=5",
+      "source": "Benzinga",
+      "pubDate": "Mon, 26 Oct 2026 07:00:00 GMT"
+    }
+  ]
 }
